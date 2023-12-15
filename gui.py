@@ -11,8 +11,8 @@ def process_data():
     captions = captions_var.get()
     timestamp = timestamp_entry.get()
     # ad 
-    # Your c  ode for processing data goes here
-    #   Use link1, li  nk2, num_clips, and captions as needed
+    # Your code for processing data goes here
+    # Use link1,li nk2, num_clips, and captions as needed
     print(f"Link 1: {link1}")
     print(f"Link 2: {link2}")
     #      vid  h   ttps://www.youtube.com/watch?v=OSEds3luvAg
