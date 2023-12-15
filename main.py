@@ -1,7 +1,7 @@
 import cv2
 from moviepy.editor import *
 import numpy as np
-import whisper
+
 
 print("test")
 

@@ -8,8 +8,6 @@ from selenium import webdriver
 driver = webdriver.Chrome()
 
 #get url
-
-
 #use url to get heatmap
 #get length of video
 #use that script to get timestamp
@@ -36,12 +34,23 @@ class Stitcher:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         self.result = cv2.VideoWriter("testvid.mp4", fourcc, 25.0, (360,640))
 
-    def Clipper(self,minus_timestamp, timestamp,plus_timestamp):
 
+
+
+
+
+    def Clipper(self,minus_timestamp, timestamp,plus_timestamp):
         timestamp-minus_timestamp,timestamp+plus_timestamp
         
         video = VideoFileClip(self.main_video).subclip(timestamp-minus_timestamp,timestamp+plus_timestamp)
         video.write_videofile("ClippedVideo.mp4",fps=25) # Many options...
+
+
+
+
+
+
+
 
     def Crop_stitch(self):
         cap = cv2.VideoCapture(self.minecraft_video)
@@ -82,3 +91,14 @@ class Stitcher:
         audio_clip = AudioFileClip(self.main_video)
         final_clip = video_clip.set_audio(audio_clip)
         final_clip.write_videofile("finalvid" + ".mp4")
+
+
+    
+    def getDataFromFile(name):
+        with open(name, "r") as file:
+            for line in file:
+                return line
+
+    data = getDataFromFile("heatmap.txt")
+    
+    

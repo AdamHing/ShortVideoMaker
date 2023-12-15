@@ -66,7 +66,7 @@ async function extractHTMLFromYouTubeVideo(videoURL) {
 
       let data = extractDAttributeValue(heatMapHTML)
 
-      visualizeData(data, "test.txt", videoLength);
+      visualizeData(data, "heatmap.txt", videoLength);
 
 
 
