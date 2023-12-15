@@ -10,12 +10,12 @@ def process_data():
     num_clips = int(num_clips_entry.get())
     captions = captions_var.get()
     timestamp = timestamp_entry.get()
-
-    # Your code for processing data goes here
-    # Use link1, link2, num_clips, and captions as needed
+    # ad 
+    # Your c  ode for processing data goes here
+    #   Use link1, li  nk2, num_clips, and captions as needed
     print(f"Link 1: {link1}")
     print(f"Link 2: {link2}")
-    #vid https://www.youtube.com/watch?v=OSEds3luvAg
+    #      vid  h   ttps://www.youtube.com/watch?v=OSEds3luvAg
     YouTube(link1).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/YTV.mp4')
     #MC https://www.youtube.com/watch?v=ZkHKGWKq9mY
     if not os.path.exists("Source_videos/MCV.mp4"):
