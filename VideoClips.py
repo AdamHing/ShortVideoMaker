@@ -18,7 +18,7 @@ driver = webdriver.Chrome()
 
 #get length of video
 class VideoClips():
-    def __init__(self, main_vid_url,fun_vid_url,timestamp, ClipsPerVideo, leadingBias, ):
+    def __init__(self, main_vid_url,fun_vid_url,timestamp, ClipsPerVideo,):
         self.main_vid_url = main_vid_url
         self.fun_vid_url = fun_vid_url
         self.timestamp = timestamp
