@@ -2,22 +2,48 @@ import tkinter as tk
 from tkinter import ttk
 from BlackSubtitles import VideoTranscriber
 from pytube import YouTube
-from main import Stitcher
+#from main import Stitcher
+from VideoClips import Clipper,Stitcher
 import os
+import threading
+minus_timestamp = 15
+plus_timestamp = 30
 def process_data():
     link1 = link1_entry.get()
     link2 = link2_entry.get()
-    num_clips = int(num_clips_entry.get())
+    num_clips = num_clips_entry.get()
     captions = captions_var.get()
-    timestamp = timestamp_entry.get()
+    manual_timestamp = timestamp_entry.get()
 
     # Your code for processing data goes here
     # Use link1, link2, num_clips, and captions as needed
     print(f"Link 1: {link1}")
     print(f"Link 2: {link2}")
+    #https://www.youtube.com/watch?v=J3-m7dAL_cY #red dead
+    # https://www.youtube.com/watch?v=a60UewomiCg
     #vid https://www.youtube.com/watch?v=OSEds3luvAg
     YouTube(link1).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/YTV.mp4')
     #MC https://www.youtube.com/watch?v=ZkHKGWKq9mY
+    if manual_timestamp:
+        timestamp = int(manual_timestamp)
+    else: 
+        print("getting video duration")
+        vid_duration = Clipper.Video_duration(link1)
+        print(vid_duration)
+        #data = Clipper.getDataFromFile("heatmap.txt")
+        data = Clipper.getHeatmap(link1)
+        print(data)
+        dataPointsArray = Clipper.preProcessData(data)
+        highest_point = Clipper.plotCurve(dataPointsArray, vid_duration)
+        print("Highest point coordinates:", highest_point)
+        timestamp = highest_point[0]
+
+    print("downloading video")
+    Clipper.download(link1,minus_timestamp, timestamp,plus_timestamp)
+    if not link2:
+        #use repo of other fun videos
+        pass
+
     if not os.path.exists("Source_videos/MCV.mp4"):
         YouTube(link2).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/MCV.mp4')
     else:
@@ -29,15 +55,12 @@ def process_data():
     MYVIDEO = "Source_videos/YTV.mp4"
     MCVIDEO = "Source_videos/MCV.mp4"
     stitcher = Stitcher(MYVIDEO,MCVIDEO)
-
-    stitcher.Clipper(30, timestamp,30)
+    # stitcher.Clip(30, timestamp,30)
     print("=========1==========")
     stitcher.Crop_stitch()
     print("=========2==========")
     stitcher.Audio()
     print("=========3==========")
-
-
 
     print(f"Number of Clips: {num_clips}")
     print(f"Captions: {captions}")
@@ -48,20 +71,16 @@ def process_data():
         model_path = "base.en"
         video_path = "finalvid.mp4"
         output_video_path = "outputvideos/output.mp4"
-
         transcriber = VideoTranscriber(model_path, video_path)
         transcriber.extract_audio()
         transcriber.transcribe_video()
         transcriber.create_video(output_video_path)
 
-
 # Create the main window
 root = tk.Tk()
 root.title("Monkey!")
-
 # Set the background color to black
 root.configure(bg="#000000")
-
 # Configure a dark theme
 style = ttk.Style()
 style.theme_use('clam')  # You can experiment with other available themes
@@ -108,5 +127,10 @@ create_button.grid(row=5, column=0, columnspan=2, pady=20)
 root.mainloop()
 
 
+if __name__ == "__main__":
 
+    t1 = threading.Thread(target=process_data, name="t1")
 
+    t1.start()
+
+    t1.join()

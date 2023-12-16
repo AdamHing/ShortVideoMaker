@@ -25,8 +25,8 @@ class Timestamp():
         return dataPointsArray
 
 
-    def plotCurve(points, self):
-        x = [((p[0] - 1) * (self.videoLength) / (1000 - 1)) for p in points]
+    def plotCurve(points, videoLength):
+        x = [((p[0] - 1) * (videoLength) / (1000 - 1)) for p in points]
         y = [-p[1] for p in points]
         # plt.plot(x, y) #uncomment these two lines to enable graph
         # plt.show()
@@ -38,7 +38,7 @@ class Timestamp():
         return highest_point
 
     
-    
+    data = getDataFromFile("heatmap.txt")
 
     dataPointsArray = preProcessData(data)
 

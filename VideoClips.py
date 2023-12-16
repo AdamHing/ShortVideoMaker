@@ -1,56 +1,122 @@
 import numpy as np
-import selenium
 import cv2
 from moviepy.editor import *
 import numpy as np
+import matplotlib.pyplot as plt
+import sys
+import yt_dlp
+from yt_dlp.utils import download_range_func
 from selenium import webdriver
+import time
+from bs4 import BeautifulSoup
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome  import ChromeDriverManager
+from pytube import YouTube 
 
-driver = webdriver.Chrome()
+options = Options()
+options.add_argument('--headless')
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
 
 #get url
 #use url to get heatmap
 #get length of video
 #use that script to get timestamp
 
-#download video
-
 #get length of video
-class VideoClips():
-    def __init__(self, main_vid_url,fun_vid_url,timestamp, ClipsPerVideo,):
-        self.main_vid_url = main_vid_url
-        self.fun_vid_url = fun_vid_url
-        self.timestamp = timestamp
+class Clipper():
+    def __init__(self, ClipsPerVideo):
+        # self.main_vid_url = main_vid_url
+        # self.fun_vid_url = fun_vid_url
         self.ClipsPerVideo = ClipsPerVideo
         self.leadingBias = 10 #leading timestamp
 
+    def getHeatmap(url):
+        driver.get(url)
+        driver.maximize_window()
+        time.sleep(5)
+        soup = BeautifulSoup(driver.page_source,"html.parser")
+        heatmap = soup.find("path", {"class": "ytp-heat-map-path"}).get('d')
+        heatmap = heatmap.replace("M 0.0,100.0 ","")
+        return heatmap
 
+    def getDataFromFile(name):
+        with open(name, "r") as file:
+            for line in file:
+                return line
+    
+    def preProcessData(data):
+        tripletsArray = data.split("C ")
+        dataPointsArray = []
+        for triplets in tripletsArray:
+            if triplets != "":
+                pointsArray = triplets.split(" ")[:3]
+                for points in pointsArray:
+                    p = points.split(",")
+                    dataPointsArray.append([float(p[0]), float(p[1])])
+        return dataPointsArray   
+
+    def plotCurve(points, videoLength, N=1):
+        x = [((p[0] - 1) * (videoLength) / (1000 - 1)) for p in points]
+        y = [-p[1] for p in points]
+        # plt.plot(x, y) #uncomment these two lines to enable graph
+        # plt.show()
+       
+        #trying to get multople clips from the same video
+        # sorted_point_index = sorted(y)
+        # topN_timestamps = sorted_point_index[-N:]
+        # for t in topN_timestamps:
+        #     print(t)
+
+        # Find the highest point
+        max_point_index = y.index(max(y))
+        highest_point = (x[max_point_index], y[max_point_index])
+        return highest_point
+    
+    def download(url,minus_timestamp,timestamp, plus_timestamp):
+        start_time = timestamp-minus_timestamp
+        end_time = timestamp+plus_timestamp
+        # start_time = 2  # accepts decimal value like 2.3
+        # end_time = 7  
+        yt_opts = {
+            "format": "mp4[height=720]",
+            'verbose': True,
+            'download_ranges': download_range_func(None, [(start_time, end_time)]),
+            'force_keyframes_at_cuts': True,
+            'outtmpl': os.path.join("ClippedVideo.mp4"),
+        }
+        
+        with yt_dlp.YoutubeDL(yt_opts) as ydl:
+            ydl.download(url)
+            dictMeta = ydl.extract_info(url)
+    
+    def Video_duration(url):
+        return YouTube(url).length
+
+    #not required
+    def seconds_to_hms(seconds): 
+        seconds = seconds[0]
+        print(type(seconds))
+        hours = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        remaining_seconds = seconds % 60
+        return hours, minutes, remaining_seconds   
 
 
 class Stitcher:
     def __init__(self,main_video,minecraft_video):
         self.main_video = main_video
         self.minecraft_video = minecraft_video
-
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        self.result = cv2.VideoWriter("testvid.mp4", fourcc, 25.0, (360,640))
 
+        vidcap = cv2.VideoCapture(self.main_video)
+        self.fps = vidcap.get(cv2.CAP_PROP_FPS)
+        self.result = cv2.VideoWriter("StitchedVideo.mp4", fourcc, self.fps, (360,640))
 
-
-
-
-
-    def Clipper(self,minus_timestamp, timestamp,plus_timestamp):
+    def Clip(self,minus_timestamp, timestamp,plus_timestamp):
         timestamp-minus_timestamp,timestamp+plus_timestamp
-        
         video = VideoFileClip(self.main_video).subclip(timestamp-minus_timestamp,timestamp+plus_timestamp)
-        video.write_videofile("ClippedVideo.mp4",fps=25) # Many options...
-
-
-
-
-
-
-
+        video.write_videofile("ClippedVideo.mp4",fps=self.fps) # Many options...
 
     def Crop_stitch(self):
         cap = cv2.VideoCapture(self.minecraft_video)
@@ -69,8 +135,6 @@ class Stitcher:
                 frame = frame[200:880, 0:1920]
                 frame = cv2.resize(frame,(360,256), interpolation = cv2.INTER_LINEAR)
                 frame_out = np.concatenate((frame2, frame), axis=0)
-                
-
                 #frame_out = cv2.putText(frame_out,"Test",org=(310,480),fontFace=cv2.FONT_HERSHEY_SIMPLEX ,fontScale=1,color=(255, 0, 0),thickness=2)
                 # cv2.imshow('Frame', frame_out) 
                 self.result.write(frame_out)
@@ -87,18 +151,7 @@ class Stitcher:
         cv2.destroyAllWindows() 
 
     def Audio(self):
-        video_clip = VideoFileClip("testvid.mp4")
-        audio_clip = AudioFileClip(self.main_video)
+        video_clip = VideoFileClip("StitchedVideo.mp4")
+        audio_clip = AudioFileClip('ClippedVideo.mp4')
         final_clip = video_clip.set_audio(audio_clip)
         final_clip.write_videofile("finalvid" + ".mp4")
-
-
-    
-    def getDataFromFile(name):
-        with open(name, "r") as file:
-            for line in file:
-                return line
-
-    data = getDataFromFile("heatmap.txt")
-    
-    
