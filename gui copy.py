@@ -43,7 +43,6 @@ def process_data():
     if not link2:
         #use repo of other fun videos
         pass
-
     if not os.path.exists("Source_videos/MCV.mp4"):
         YouTube(link2).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/MCV.mp4')
     else:
@@ -51,7 +50,6 @@ def process_data():
 
     # MYVIDEO = "Source_videos/YTV"
     # MCVIDEO = 'Source_videos/MCV'
-
     MYVIDEO = "Source_videos/YTV.mp4"
     MCVIDEO = "Source_videos/MCV.mp4"
     stitcher = Stitcher(MYVIDEO,MCVIDEO)
@@ -61,7 +59,6 @@ def process_data():
     print("=========2==========")
     stitcher.Audio()
     print("=========3==========")
-
     print(f"Number of Clips: {num_clips}")
     print(f"Captions: {captions}")
     print(f"Timestamp: {timestamp}")

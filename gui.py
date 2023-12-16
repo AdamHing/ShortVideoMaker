@@ -5,7 +5,7 @@ from pytube import YouTube
 #from main import Stitcher
 from VideoClips import Clipper,Stitcher
 import os
-import threading
+
 minus_timestamp = 15
 plus_timestamp = 30
 def process_data():
@@ -43,7 +43,6 @@ def process_data():
     if not link2:
         #use repo of other fun videos
         pass
-
     if not os.path.exists("Source_videos/MCV.mp4"):
         YouTube(link2).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/MCV.mp4')
     else:
@@ -61,7 +60,6 @@ def process_data():
     print("=========2==========")
     stitcher.Audio()
     print("=========3==========")
-
     print(f"Number of Clips: {num_clips}")
     print(f"Captions: {captions}")
     print(f"Timestamp: {timestamp}")
@@ -126,11 +124,3 @@ create_button.grid(row=5, column=0, columnspan=2, pady=20)
 # Start the main loop
 root.mainloop()
 
-
-if __name__ == "__main__":
-
-    t1 = threading.Thread(target=process_data, name="t1")
-
-    t1.start()
-
-    t1.join()
