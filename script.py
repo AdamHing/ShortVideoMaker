@@ -3,61 +3,56 @@ import sys
 print(sys.argv[1:])
 videoLength = int(sys.argv[1:][0])
 
+class Timestamp():
+    def __init__(self, videoLength):
+        self.videoLength = videoLength
 
-def getDataFromFile(name):
-    with open(name, "r") as file:
-        for line in file:
-            return line
-
-
-def preProcessData(data):
-
-    tripletsArray = data.split("C ")
-
-    dataPointsArray = []
-
-    for triplets in tripletsArray:
-        if triplets != "":
-
-            pointsArray = triplets.split(" ")[:3]
-
-            for points in pointsArray:
-                p = points.split(",")
-
-                dataPointsArray.append([float(p[0]), float(p[1])])
-
-    return dataPointsArray
+    def getDataFromFile(name):
+        with open(name, "r") as file:
+            for line in file:
+                return line
 
 
-def plotCurve(points, videoLength):
-    x = [((p[0] - 1) * (videoLength) / (1000 - 1)) for p in points]
-    y = [-p[1] for p in points]
-    plt.plot(x, y)
-    plt.show()
+    def preProcessData(data):
+        tripletsArray = data.split("C ")
+        dataPointsArray = []
+        for triplets in tripletsArray:
+            if triplets != "":
+                pointsArray = triplets.split(" ")[:3]
+                for points in pointsArray:
+                    p = points.split(",")
+                    dataPointsArray.append([float(p[0]), float(p[1])])
+        return dataPointsArray
 
-    # Find the highest point
-    max_point_index = y.index(max(y))
-    highest_point = (x[max_point_index], y[max_point_index])
 
-    return highest_point
+    def plotCurve(points, videoLength):
+        x = [((p[0] - 1) * (videoLength) / (1000 - 1)) for p in points]
+        y = [-p[1] for p in points]
+        # plt.plot(x, y) #uncomment these two lines to enable graph
+        # plt.show()
 
+        # Find the highest point
+        max_point_index = y.index(max(y))
+        highest_point = (x[max_point_index], y[max_point_index])
 
-data = getDataFromFile("test.txt")
+        return highest_point
 
-dataPointsArray = preProcessData(data)
+    
+    data = getDataFromFile("heatmap.txt")
 
-highest_point = plotCurve(dataPointsArray, videoLength)
-print("Highest point coordinates:", highest_point)
+    dataPointsArray = preProcessData(data)
 
-def seconds_to_hms(seconds):
-   
-    seconds = seconds[0]
-    hours = hours[0]
-    minutes = minutes[0]
-    print(type(seconds))
-    hours = seconds // 3600
-    minutes = (seconds % 3600) // 60
-    remaining_seconds = seconds % 60
-    return hours, minutes, remaining_seconds
+    highest_point = plotCurve(dataPointsArray, videoLength)
+    print("Highest point coordinates:", highest_point)
 
-print(seconds_to_hms(highest_point))
+    def seconds_to_hms(seconds):
+    
+        seconds = seconds[0]
+
+        print(type(seconds))
+        hours = seconds // 3600
+        minutes = (seconds % 3600) // 60
+        remaining_seconds = seconds % 60
+        return hours, minutes, remaining_seconds
+
+    print(seconds_to_hms(highest_point))

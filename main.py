@@ -1,9 +1,9 @@
 import cv2
 from moviepy.editor import *
 import numpy as np
-import whisper
 
 
+print("test")
 
 class Stitcher:
     def __init__(self,main_video,minecraft_video):
