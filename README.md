@@ -17,7 +17,7 @@ Before using this application, make sure you have the following dependencies ins
 You can install the required dependencies using:
 
 ```bash
-pip install tkinter pytube
+pip install -r requirements.txt
 ```
 
 ## How to Use
