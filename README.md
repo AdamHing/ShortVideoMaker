@@ -30,7 +30,7 @@ pip install tkinter pytube
 
 2. **Run the Application:**
    ```bash
-   python your_script.py
+   python GUI.py
    ```
 
 3. **Fill in the GUI Form:**
