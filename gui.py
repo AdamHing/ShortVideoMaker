@@ -6,6 +6,9 @@ from pytube import YouTube
 from VideoClips import Clipper,Stitcher
 import os
 
+MYVIDEO = "ClippedVideo.mp4"
+MCVIDEO = "Source_videos/MCV.mp4"
+
 minus_timestamp = 15
 plus_timestamp = 30
 def process_data():
@@ -21,10 +24,11 @@ def process_data():
     print(f"Link 2: {link2}")
     #https://www.youtube.com/watch?v=J3-m7dAL_cY #red dead
     # https://www.youtube.com/watch?v=a60UewomiCg
-    #vid https://www.youtube.com/watch?v=OSEds3luvAg
-    YouTube(link1).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/YTV.mp4')
+    #vid https://www.youtube.com/watch?v=Y5RQgchauHs
+    #YouTube(link1).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/YTV.mp4')
     #MC https://www.youtube.com/watch?v=ZkHKGWKq9mY
     if manual_timestamp:
+        print("using manual_timestamp")
         timestamp = int(manual_timestamp)
     else: 
         print("getting video duration")
@@ -51,8 +55,7 @@ def process_data():
     # MYVIDEO = "Source_videos/YTV"
     # MCVIDEO = 'Source_videos/MCV'
 
-    MYVIDEO = "Source_videos/YTV.mp4"
-    MCVIDEO = "Source_videos/MCV.mp4"
+    
     stitcher = Stitcher(MYVIDEO,MCVIDEO)
     # stitcher.Clip(30, timestamp,30)
     print("=========1==========")
