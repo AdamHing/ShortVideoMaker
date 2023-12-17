@@ -52,6 +52,3 @@ pip install tkinter pytube
 - Make sure to provide valid video links and follow the on-screen instructions.
 - Some functionality (commented-out lines) might be incomplete or optional.
 
----
-
-Feel free to customize this README based on your specific requirements or provide additional details about the project structure, file organization, or any other relevant information.
