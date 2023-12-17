@@ -24,8 +24,8 @@ pip install tkinter pytube
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/yourusername/your-repository.git
-   cd your-repository
+   git clone https://github.com/AdamHing/ShortVideoMaker.git
+   cd ShortVideoMaker
    ```
 
 2. **Run the Application:**
