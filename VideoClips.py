@@ -56,7 +56,7 @@ class Clipper():
                     dataPointsArray.append([float(p[0]), float(p[1])])
         return dataPointsArray   
 
-    def plotCurve(points, videoLength, N=1):
+    def plotCurve(points, videoLength):
         x = [((p[0] - 1) * (videoLength) / (1000 - 1)) for p in points]
         y = [-p[1] for p in points]
         # plt.plot(x, y) #uncomment these two lines to enable graph
@@ -88,7 +88,6 @@ class Clipper():
         
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
             ydl.download(url)
-            dictMeta = ydl.extract_info(url)
     
     def Video_duration(url):
         return YouTube(url).length
@@ -104,22 +103,23 @@ class Clipper():
 
 
 class Stitcher:
-    def __init__(self,main_video,minecraft_video):
+    def __init__(self,main_video,fun_video):
         self.main_video = main_video
-        self.minecraft_video = minecraft_video
+        self.fun_video = fun_video
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
         self.result = cv2.VideoWriter("StitchedVideo.mp4", fourcc, self.fps, (360,640))
-
+    #depricated 
+    #used to clip full length mp4 videos
     def Clip(self,minus_timestamp, timestamp,plus_timestamp):
         timestamp-minus_timestamp,timestamp+plus_timestamp
         video = VideoFileClip(self.main_video).subclip(timestamp-minus_timestamp,timestamp+plus_timestamp)
         video.write_videofile("ClippedVideo.mp4",fps=self.fps) # Many options...
 
     def Crop_stitch(self):
-        cap = cv2.VideoCapture(self.minecraft_video)
+        cap = cv2.VideoCapture(self.fun_video)
         cap2 = cv2.VideoCapture('ClippedVideo.mp4')
         if (cap2.isOpened()== False): 
             print("Error opening video file") 
@@ -132,7 +132,7 @@ class Stitcher:
                 #print(frame.shape)#(1080, 1920, 3)
                 #print(frame2.shape)#(720, 1280, 3)
                 frame2 = cv2.resize(frame2,(360,384), interpolation = cv2.INTER_LINEAR)
-                frame = frame[200:880, 0:1920]
+                #frame = frame[200:880, 0:1920]
                 frame = cv2.resize(frame,(360,256), interpolation = cv2.INTER_LINEAR)
                 frame_out = np.concatenate((frame2, frame), axis=0)
                 #frame_out = cv2.putText(frame_out,"Test",org=(310,480),fontFace=cv2.FONT_HERSHEY_SIMPLEX ,fontScale=1,color=(255, 0, 0),thickness=2)
