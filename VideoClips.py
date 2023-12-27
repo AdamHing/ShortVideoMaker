@@ -35,12 +35,6 @@ class Clipper():
         heatmap = heatmap.replace("M 0.0,100.0 ","")
         return heatmap
 
-    # DEPRICATED
-    def getDataFromFile(name):
-        with open(name, "r") as file:
-            for line in file:
-                return line
-    
     def preProcessData(data):
         tripletsArray = data.split("C ")
         dataPointsArray = []
@@ -63,12 +57,10 @@ class Clipper():
         # topN_timestamps = sorted_point_index[-N:]
         # for t in topN_timestamps:
         #     print(t)
-
         # Find the highest point
         max_point_index = y.index(max(y))
         highest_point = (x[max_point_index], y[max_point_index])
         return highest_point
-
     
     def download(url,minus_timestamp,timestamp, plus_timestamp):
         start_time = timestamp-minus_timestamp
