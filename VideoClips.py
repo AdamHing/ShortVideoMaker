@@ -2,8 +2,6 @@ import numpy as np
 import cv2
 from moviepy.editor import *
 import numpy as np
-import matplotlib.pyplot as plt
-import sys
 import yt_dlp
 from yt_dlp.utils import download_range_func
 from selenium import webdriver
@@ -12,7 +10,7 @@ from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome  import ChromeDriverManager
-from pytube import YouTube 
+ 
 
 options = Options()
 options.add_argument('--headless')
@@ -23,28 +21,20 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),optio
 #get length of video
 #use that script to get timestamp
 
-#get length of video
 class Clipper():
     def __init__(self, ClipsPerVideo):
         # self.main_vid_url = main_vid_url
         # self.fun_vid_url = fun_vid_url
-        self.ClipsPerVideo = ClipsPerVideo
-        self.leadingBias = 10 #leading timestamp
+        self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
 
     def getHeatmap(url):
         driver.get(url)
-        driver.maximize_window()
-        time.sleep(5)
+        time.sleep(8)
         soup = BeautifulSoup(driver.page_source,"html.parser")
         heatmap = soup.find("path", {"class": "ytp-heat-map-path"}).get('d')
         heatmap = heatmap.replace("M 0.0,100.0 ","")
         return heatmap
 
-    def getDataFromFile(name):
-        with open(name, "r") as file:
-            for line in file:
-                return line
-    
     def preProcessData(data):
         tripletsArray = data.split("C ")
         dataPointsArray = []
@@ -62,12 +52,11 @@ class Clipper():
         # plt.plot(x, y) #uncomment these two lines to enable graph
         # plt.show()
        
-        #trying to get multople clips from the same video
+        #trying to get multiple clips from the same video
         # sorted_point_index = sorted(y)
         # topN_timestamps = sorted_point_index[-N:]
         # for t in topN_timestamps:
         #     print(t)
-
         # Find the highest point
         max_point_index = y.index(max(y))
         highest_point = (x[max_point_index], y[max_point_index])
@@ -79,18 +68,16 @@ class Clipper():
         # start_time = 2  # accepts decimal value like 2.3
         # end_time = 7  
         yt_opts = {
-            "format": "mp4[height=720]",
+            #"format": "mp4[height=720]",
+            "format": "best",
             'verbose': True,
             'download_ranges': download_range_func(None, [(start_time, end_time)]),
             'force_keyframes_at_cuts': True,
-            'outtmpl': os.path.join("ClippedVideo.mp4"),
+            'outtmpl': os.path.join("Source_videos/ClippedVideo.mp4"),
         }
         
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
             ydl.download(url)
-    
-    def Video_duration(url):
-        return YouTube(url).length
 
     #not required
     def seconds_to_hms(seconds): 
@@ -101,27 +88,26 @@ class Clipper():
         remaining_seconds = seconds % 60
         return hours, minutes, remaining_seconds   
 
-
 class Stitcher:
     def __init__(self,main_video,fun_video):
         self.main_video = main_video
         self.fun_video = fun_video
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
-        self.result = cv2.VideoWriter("StitchedVideo.mp4", fourcc, self.fps, (360,640))
+        self.result = cv2.VideoWriter("stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
+
     #depricated 
     #used to clip full length mp4 videos
     def Clip(self,minus_timestamp, timestamp,plus_timestamp):
         timestamp-minus_timestamp,timestamp+plus_timestamp
         video = VideoFileClip(self.main_video).subclip(timestamp-minus_timestamp,timestamp+plus_timestamp)
-        video.write_videofile("ClippedVideo.mp4",fps=self.fps) # Many options...
+        video.write_videofile(self.main_video,fps=self.fps) # Many options...
 
     def Crop_stitch(self):
-        cap = cv2.VideoCapture(self.fun_video)
-        cap2 = cv2.VideoCapture('ClippedVideo.mp4')
-        if (cap2.isOpened()== False): 
+        cap = cv2.VideoCapture(self.fun_video) #BOTTOM VIDEO
+        cap2 = cv2.VideoCapture(self.main_video) #TOP VIDEO
+        if (cap2.isOpened() == False): 
             print("Error opening video file") 
         # Read until video is completed 
         while(cap2.isOpened()): 
@@ -148,10 +134,18 @@ class Stitcher:
         # the video capture object 
         self.result.release()
         cap.release() 
-        cv2.destroyAllWindows() 
+        cv2.destroyAllWindows()
 
-    def Audio(self):
-        video_clip = VideoFileClip("StitchedVideo.mp4")
-        audio_clip = AudioFileClip('ClippedVideo.mp4')
+    def Audio_watermark(self,StitchedVideoNoAudio,watermarkPath,StitchedVideo_W_audio_PATH):
+        video_clip = VideoFileClip(StitchedVideoNoAudio)
+        #add watermark 
+        logo = (ImageClip(watermarkPath)
+                .set_duration(video_clip.duration)
+                .resize(height=50) # if you need to resize...
+                .margin(right=8, top=8, opacity=0) # (optional) logo-border padding
+                .set_pos(("right","top")))
+        video_clip = CompositeVideoClip([video_clip,logo])
+
+        audio_clip = AudioFileClip(self.main_video)
         final_clip = video_clip.set_audio(audio_clip)
-        final_clip.write_videofile("finalvid" + ".mp4")
+        final_clip.write_videofile(StitchedVideo_W_audio_PATH)

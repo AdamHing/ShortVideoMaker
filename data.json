@@ -1,0 +1,772 @@
+[
+    {
+        "word": "I",
+        "start": 0.7800000000000022,
+        "end": 1.22
+    },
+    {
+        "word": "don't",
+        "start": 1.22,
+        "end": 1.4
+    },
+    {
+        "word": "hate",
+        "start": 1.4,
+        "end": 1.56
+    },
+    {
+        "word": "this",
+        "start": 1.56,
+        "end": 1.8
+    },
+    {
+        "word": "move",
+        "start": 1.8,
+        "end": 1.94
+    },
+    {
+        "word": "right",
+        "start": 1.94,
+        "end": 2.12
+    },
+    {
+        "word": "here",
+        "start": 2.12,
+        "end": 2.24
+    },
+    {
+        "word": "from",
+        "start": 2.24,
+        "end": 2.42
+    },
+    {
+        "word": "Dark,",
+        "start": 2.42,
+        "end": 2.62
+    },
+    {
+        "word": "but",
+        "start": 2.7,
+        "end": 3.24
+    },
+    {
+        "word": "I",
+        "start": 3.24,
+        "end": 4.16
+    },
+    {
+        "word": "wonder",
+        "start": 4.16,
+        "end": 4.38
+    },
+    {
+        "word": "if",
+        "start": 4.38,
+        "end": 4.5
+    },
+    {
+        "word": "it",
+        "start": 4.5,
+        "end": 4.58
+    },
+    {
+        "word": "would",
+        "start": 4.58,
+        "end": 4.72
+    },
+    {
+        "word": "have",
+        "start": 4.72,
+        "end": 4.84
+    },
+    {
+        "word": "been",
+        "start": 4.84,
+        "end": 4.94
+    },
+    {
+        "word": "easier",
+        "start": 4.94,
+        "end": 5.26
+    },
+    {
+        "word": "for",
+        "start": 5.26,
+        "end": 5.4
+    },
+    {
+        "word": "him",
+        "start": 5.4,
+        "end": 5.56
+    },
+    {
+        "word": "to",
+        "start": 5.56,
+        "end": 5.78
+    },
+    {
+        "word": "transition",
+        "start": 5.78,
+        "end": 6.24
+    },
+    {
+        "word": "towards",
+        "start": 6.24,
+        "end": 6.94
+    },
+    {
+        "word": "maybe",
+        "start": 6.94,
+        "end": 7.68
+    },
+    {
+        "word": "like",
+        "start": 7.68,
+        "end": 8.02
+    },
+    {
+        "word": "Hydra",
+        "start": 8.02,
+        "end": 8.4
+    },
+    {
+        "word": "Lurker",
+        "start": 8.4,
+        "end": 8.84
+    },
+    {
+        "word": "or",
+        "start": 8.84,
+        "end": 9.2
+    },
+    {
+        "word": "maybe",
+        "start": 9.2,
+        "end": 9.46
+    },
+    {
+        "word": "some",
+        "start": 9.46,
+        "end": 9.7
+    },
+    {
+        "word": "Infestors",
+        "start": 9.7,
+        "end": 10.28
+    },
+    {
+        "word": "instead.",
+        "start": 10.28,
+        "end": 10.78
+    },
+    {
+        "word": "Because",
+        "start": 11.2,
+        "end": 11.32
+    },
+    {
+        "word": "this",
+        "start": 11.32,
+        "end": 11.52
+    },
+    {
+        "word": "kind",
+        "start": 11.52,
+        "end": 11.66
+    },
+    {
+        "word": "of",
+        "start": 11.66,
+        "end": 11.84
+    },
+    {
+        "word": "feels",
+        "start": 11.84,
+        "end": 11.96
+    },
+    {
+        "word": "like",
+        "start": 11.96,
+        "end": 12.16
+    },
+    {
+        "word": "a",
+        "start": 12.16,
+        "end": 12.4
+    },
+    {
+        "word": "step",
+        "start": 12.4,
+        "end": 12.6
+    },
+    {
+        "word": "down,",
+        "start": 12.6,
+        "end": 12.9
+    },
+    {
+        "word": "going",
+        "start": 12.92,
+        "end": 13.22
+    },
+    {
+        "word": "from",
+        "start": 13.22,
+        "end": 13.54
+    },
+    {
+        "word": "Roach",
+        "start": 13.54,
+        "end": 13.88
+    },
+    {
+        "word": "Ravager",
+        "start": 13.88,
+        "end": 14.24
+    },
+    {
+        "word": "into",
+        "start": 14.24,
+        "end": 14.62
+    },
+    {
+        "word": "Ling",
+        "start": 14.62,
+        "end": 14.84
+    },
+    {
+        "word": "Bane.",
+        "start": 14.84,
+        "end": 15.76
+    },
+    {
+        "word": "Like",
+        "start": 15.92,
+        "end": 16.1
+    },
+    {
+        "word": "you",
+        "start": 16.1,
+        "end": 16.28
+    },
+    {
+        "word": "bought",
+        "start": 16.28,
+        "end": 16.42
+    },
+    {
+        "word": "all",
+        "start": 16.42,
+        "end": 16.6
+    },
+    {
+        "word": "that",
+        "start": 16.6,
+        "end": 16.74
+    },
+    {
+        "word": "time",
+        "start": 16.74,
+        "end": 16.92
+    },
+    {
+        "word": "with",
+        "start": 16.92,
+        "end": 17.04
+    },
+    {
+        "word": "that",
+        "start": 17.04,
+        "end": 17.18
+    },
+    {
+        "word": "early",
+        "start": 17.18,
+        "end": 17.44
+    },
+    {
+        "word": "game",
+        "start": 17.44,
+        "end": 18.0
+    },
+    {
+        "word": "upgrade",
+        "start": 18.0,
+        "end": 18.56
+    },
+    {
+        "word": "skip",
+        "start": 18.56,
+        "end": 18.82
+    },
+    {
+        "word": "and",
+        "start": 18.82,
+        "end": 18.94
+    },
+    {
+        "word": "now",
+        "start": 18.94,
+        "end": 19.14
+    },
+    {
+        "word": "we're",
+        "start": 19.14,
+        "end": 19.44
+    },
+    {
+        "word": "still",
+        "start": 19.44,
+        "end": 19.72
+    },
+    {
+        "word": "getting",
+        "start": 19.72,
+        "end": 19.88
+    },
+    {
+        "word": "the",
+        "start": 19.88,
+        "end": 20.02
+    },
+    {
+        "word": "upgrade",
+        "start": 20.02,
+        "end": 20.26
+    },
+    {
+        "word": "anyways.",
+        "start": 20.26,
+        "end": 20.66
+    },
+    {
+        "word": "I",
+        "start": 20.86,
+        "end": 21.04
+    },
+    {
+        "word": "mean",
+        "start": 21.04,
+        "end": 21.16
+    },
+    {
+        "word": "I",
+        "start": 21.16,
+        "end": 21.24
+    },
+    {
+        "word": "don't",
+        "start": 21.24,
+        "end": 21.46
+    },
+    {
+        "word": "mind",
+        "start": 21.46,
+        "end": 21.62
+    },
+    {
+        "word": "seeing",
+        "start": 21.62,
+        "end": 21.84
+    },
+    {
+        "word": "it",
+        "start": 21.84,
+        "end": 22.06
+    },
+    {
+        "word": "later",
+        "start": 22.06,
+        "end": 22.26
+    },
+    {
+        "word": "on,",
+        "start": 22.26,
+        "end": 22.48
+    },
+    {
+        "word": "but",
+        "start": 22.48,
+        "end": 23.26
+    },
+    {
+        "word": "I",
+        "start": 23.26,
+        "end": 24.28
+    },
+    {
+        "word": "like",
+        "start": 24.28,
+        "end": 24.42
+    },
+    {
+        "word": "the",
+        "start": 24.42,
+        "end": 24.64
+    },
+    {
+        "word": "early",
+        "start": 24.64,
+        "end": 24.88
+    },
+    {
+        "word": "game",
+        "start": 24.88,
+        "end": 25.04
+    },
+    {
+        "word": "here",
+        "start": 25.04,
+        "end": 25.24
+    },
+    {
+        "word": "for",
+        "start": 25.24,
+        "end": 25.42
+    },
+    {
+        "word": "Dark.",
+        "start": 25.42,
+        "end": 25.68
+    },
+    {
+        "word": "I",
+        "start": 25.7,
+        "end": 25.92
+    },
+    {
+        "word": "don't",
+        "start": 25.92,
+        "end": 26.22
+    },
+    {
+        "word": "necessarily",
+        "start": 26.22,
+        "end": 26.8
+    },
+    {
+        "word": "love",
+        "start": 26.8,
+        "end": 27.12
+    },
+    {
+        "word": "the",
+        "start": 27.12,
+        "end": 27.42
+    },
+    {
+        "word": "follow",
+        "start": 27.42,
+        "end": 27.64
+    },
+    {
+        "word": "up,",
+        "start": 27.64,
+        "end": 27.8
+    },
+    {
+        "word": "although",
+        "start": 27.8,
+        "end": 28.06
+    },
+    {
+        "word": "I'm",
+        "start": 28.06,
+        "end": 28.26
+    },
+    {
+        "word": "sure",
+        "start": 28.26,
+        "end": 28.46
+    },
+    {
+        "word": "he's",
+        "start": 28.46,
+        "end": 28.66
+    },
+    {
+        "word": "been",
+        "start": 28.66,
+        "end": 28.92
+    },
+    {
+        "word": "experimenting",
+        "start": 28.92,
+        "end": 29.46
+    },
+    {
+        "word": "with",
+        "start": 29.46,
+        "end": 29.68
+    },
+    {
+        "word": "this",
+        "start": 29.68,
+        "end": 29.9
+    },
+    {
+        "word": "for",
+        "start": 29.9,
+        "end": 30.28
+    },
+    {
+        "word": "a",
+        "start": 30.28,
+        "end": 30.28
+    },
+    {
+        "word": "while",
+        "start": 30.28,
+        "end": 30.36
+    },
+    {
+        "word": "longer",
+        "start": 30.36,
+        "end": 30.64
+    },
+    {
+        "word": "than",
+        "start": 30.64,
+        "end": 30.8
+    },
+    {
+        "word": "I",
+        "start": 30.8,
+        "end": 30.94
+    },
+    {
+        "word": "have",
+        "start": 30.94,
+        "end": 31.12
+    },
+    {
+        "word": "seen",
+        "start": 31.12,
+        "end": 31.32
+    },
+    {
+        "word": "it",
+        "start": 31.32,
+        "end": 31.52
+    },
+    {
+        "word": "and",
+        "start": 31.52,
+        "end": 31.9
+    },
+    {
+        "word": "he's",
+        "start": 31.9,
+        "end": 32.16
+    },
+    {
+        "word": "got",
+        "start": 32.16,
+        "end": 32.3
+    },
+    {
+        "word": "good",
+        "start": 32.3,
+        "end": 32.54
+    },
+    {
+        "word": "reason",
+        "start": 32.54,
+        "end": 33.0
+    },
+    {
+        "word": "to",
+        "start": 33.0,
+        "end": 33.24
+    },
+    {
+        "word": "make",
+        "start": 33.24,
+        "end": 33.38
+    },
+    {
+        "word": "this",
+        "start": 33.38,
+        "end": 33.6
+    },
+    {
+        "word": "step.",
+        "start": 33.6,
+        "end": 33.94
+    },
+    {
+        "word": "I'm",
+        "start": 35.08,
+        "end": 35.48
+    },
+    {
+        "word": "just",
+        "start": 35.48,
+        "end": 35.68
+    },
+    {
+        "word": "wondering",
+        "start": 35.68,
+        "end": 35.96
+    },
+    {
+        "word": "if",
+        "start": 35.96,
+        "end": 36.14
+    },
+    {
+        "word": "it's",
+        "start": 36.14,
+        "end": 36.34
+    },
+    {
+        "word": "the",
+        "start": 36.34,
+        "end": 36.42
+    },
+    {
+        "word": "most",
+        "start": 36.42,
+        "end": 36.62
+    },
+    {
+        "word": "optimal",
+        "start": 36.62,
+        "end": 36.9
+    },
+    {
+        "word": "one.",
+        "start": 36.9,
+        "end": 37.08
+    },
+    {
+        "word": "We",
+        "start": 37.2,
+        "end": 37.28
+    },
+    {
+        "word": "do",
+        "start": 37.28,
+        "end": 37.4
+    },
+    {
+        "word": "have",
+        "start": 37.4,
+        "end": 37.5
+    },
+    {
+        "word": "a",
+        "start": 37.5,
+        "end": 37.68
+    },
+    {
+        "word": "really",
+        "start": 37.68,
+        "end": 37.9
+    },
+    {
+        "word": "quick",
+        "start": 37.9,
+        "end": 38.06
+    },
+    {
+        "word": "Hive",
+        "start": 38.06,
+        "end": 38.28
+    },
+    {
+        "word": "by",
+        "start": 38.28,
+        "end": 38.5
+    },
+    {
+        "word": "the",
+        "start": 38.5,
+        "end": 38.6
+    },
+    {
+        "word": "way,",
+        "start": 38.6,
+        "end": 38.72
+    },
+    {
+        "word": "so",
+        "start": 39.26,
+        "end": 39.36
+    },
+    {
+        "word": "Vipers",
+        "start": 39.36,
+        "end": 39.7
+    },
+    {
+        "word": "are",
+        "start": 39.7,
+        "end": 40.0
+    },
+    {
+        "word": "already",
+        "start": 40.0,
+        "end": 40.48
+    },
+    {
+        "word": "coming",
+        "start": 40.48,
+        "end": 40.86
+    },
+    {
+        "word": "up",
+        "start": 40.86,
+        "end": 41.06
+    },
+    {
+        "word": "right",
+        "start": 41.06,
+        "end": 41.22
+    },
+    {
+        "word": "now.",
+        "start": 41.22,
+        "end": 41.44
+    },
+    {
+        "word": "They're",
+        "start": 41.58,
+        "end": 41.78
+    },
+    {
+        "word": "sitting",
+        "start": 41.78,
+        "end": 42.04
+    },
+    {
+        "word": "in",
+        "start": 42.04,
+        "end": 42.18
+    },
+    {
+        "word": "Dark",
+        "start": 42.18,
+        "end": 42.36
+    },
+    {
+        "word": "K",
+        "start": 42.36,
+        "end": 42.5
+    },
+    {
+        "word": "'kuns",
+        "start": 42.5,
+        "end": 43.48
+    },
+    {
+        "word": "getting",
+        "start": 43.48,
+        "end": 43.86
+    },
+    {
+        "word": "the...",
+        "start": 43.86,
+        "end": 44.48
+    }
+]
