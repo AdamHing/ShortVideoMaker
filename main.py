@@ -4,7 +4,8 @@ from moviepy.editor import *
 import os
 import threading
 from VideoClips import Clipper,Stitcher
-from dynamic_subtitles import DynamicSubtitles
+from subtitle_generators.dynamic_subtitles import DynamicSubtitles
+
 
 
 from models.post import UserPost

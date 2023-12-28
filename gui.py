@@ -8,7 +8,7 @@ import os
 
 
 from VideoClips import Clipper,Stitcher
-from dynamic_subtitles import DynamicSubtitles
+from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 
 MYVIDEO = "Source_videos/ClippedVideo.mp4" #top video
 MCVIDEO = "Source_videos/MCV.mp4" #botton video
