@@ -5,7 +5,6 @@ from moviepy.editor import *
 from cv2 import VideoCapture, CAP_PROP_FPS
 
 
-
 # videofilename = "StitchedVideo_W_audio.mp4"
 
 def DynamicSubtitles(videofilename):
@@ -38,9 +37,9 @@ def DynamicSubtitles(videofilename):
 
   print(wordlevel_info)
 
-  with open('data.json', 'w') as f:
+  with open('temp/data.json', 'w') as f:
       json.dump(wordlevel_info, f,indent=4)
-  with open('data.json', 'r') as f:
+  with open('temp/data.json', 'r') as f:
       wordlevel_info_modified = json.load(f)
   print(wordlevel_info_modified) 
 

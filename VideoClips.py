@@ -95,7 +95,7 @@ class Stitcher:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
-        self.result = cv2.VideoWriter("stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
+        self.result = cv2.VideoWriter("temp/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
 
     #depricated 
     #used to clip full length mp4 videos
