@@ -1,0 +1,8 @@
+with boto3
+use ec2 to run the api which outputs video.mp4
+use s3 bucket for temp video storage 
+make a link to download the video
+
+
+also containerize 
+

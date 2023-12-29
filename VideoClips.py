@@ -14,7 +14,7 @@ from webdriver_manager.chrome  import ChromeDriverManager
 
 options = Options()
 options.add_argument('--headless')
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
+
 
 #get url
 #use url to get heatmap
@@ -28,6 +28,8 @@ class Clipper():
         self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
 
     def getHeatmap(url):
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
+        time.sleep(2)
         driver.get(url)
         time.sleep(8)
         soup = BeautifulSoup(driver.page_source,"html.parser")
