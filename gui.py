@@ -8,13 +8,13 @@ import os
 
 
 from VideoClips import Clipper,Stitcher
-from dynamic_subtitles import DynamicSubtitles
+from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 
 MYVIDEO = "Source_videos/ClippedVideo.mp4" #top video
 MCVIDEO = "Source_videos/MCV.mp4" #botton video
-stitched_video_no_audio_path = "StitchedVideo_no_audio.mp4"
+stitched_video_no_audio_path = "temp/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
-stitched_video_with_audio_path = "StitchedVideo_with_audio.mp4"
+stitched_video_with_audio_path = "temp/StitchedVideo_with_audio.mp4"
 output_video_path = "outputvideos/output.mp4"
 watermarkPath = "img/watermark.png"
 minus_timestamp = 15
