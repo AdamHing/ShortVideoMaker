@@ -1,5 +1,5 @@
 ﻿# ShortVideoMaker
-![alt text](https://github.com/AdamHing/ShortVideoMaker/blob/main/img/VideoMakerDiagram2.png?raw=true)
+![alt text](https://github.com/AdamHing/ShortVideoMaker/blob/main/img/VideoMakingDiagram2.png?raw=true)
 
 # Video Processing Application
 
