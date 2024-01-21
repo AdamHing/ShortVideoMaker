@@ -1,0 +1,1 @@
+print("$"+str(abs(int(input("input your number: ")))*(1+float(input("rate of interest: "))*abs(int(input("time in x units: "))))),"is your balance sir.")

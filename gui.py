@@ -39,7 +39,8 @@ def process_data():
     #YouTube(link1).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/YTV.mp4')
     #MC https://www.youtube.com/watch?v=ZkHKGWKq9mY
     #https://www.youtube.com/watch?v=Ujvy-DEA-UM
-    
+
+    clipper = Clipper(link1)
     if manual_timestamp:
         print("using manual_timestamp")
         timestamp = int(manual_timestamp)
@@ -48,15 +49,13 @@ def process_data():
         #get length of video
         vid_duration = YouTube(link1).length
         print(vid_duration)
+        
         #data = Clipper.getDataFromFile("heatmap.txt")
-        data = Clipper.getHeatmap(link1)
-        print(data)
-        dataPointsArray = Clipper.preProcessData(data)
-        highest_point = Clipper.plotCurve(dataPointsArray, vid_duration)
+        highest_point = clipper.get_most_rewatched_timestamp(vid_duration)
         print("Highest point coordinates:", highest_point)
         timestamp = highest_point[0]
 
-    Clipper.download(link1,minus_timestamp, timestamp,plus_timestamp)
+    clipper.download(minus_timestamp, timestamp,plus_timestamp)
 
     # if "www.youtube.com" in link1:
     #     print("downloading video")

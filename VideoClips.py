@@ -14,29 +14,28 @@ from webdriver_manager.chrome  import ChromeDriverManager
 
 options = Options()
 options.add_argument('--headless')
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
+
 
 #get url
 #use url to get heatmap
 #get length of video
 #use that script to get timestamp
-
+# return status of everyfunction as it runs
 class Clipper():
-    def __init__(self, ClipsPerVideo):
-        # self.main_vid_url = main_vid_url
-        # self.fun_vid_url = fun_vid_url
-        self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
+    def __init__(self, main_vid_url):
+        self.main_vid_url = main_vid_url
+        #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
 
-    def getHeatmap(url):
-        driver.get(url)
+    def get_most_rewatched_timestamp(self, video_duration):
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
+        time.sleep(2)
+        driver.get(self.main_vid_url)
         time.sleep(8)
         soup = BeautifulSoup(driver.page_source,"html.parser")
         heatmap = soup.find("path", {"class": "ytp-heat-map-path"}).get('d')
         heatmap = heatmap.replace("M 0.0,100.0 ","")
-        return heatmap
 
-    def preProcessData(data):
-        tripletsArray = data.split("C ")
+        tripletsArray = heatmap.split("C ")
         dataPointsArray = []
         for triplets in tripletsArray:
             if triplets != "":
@@ -44,25 +43,16 @@ class Clipper():
                 for points in pointsArray:
                     p = points.split(",")
                     dataPointsArray.append([float(p[0]), float(p[1])])
-        return dataPointsArray   
 
-    def plotCurve(points, videoLength):
-        x = [((p[0] - 1) * (videoLength) / (1000 - 1)) for p in points]
-        y = [-p[1] for p in points]
-        # plt.plot(x, y) #uncomment these two lines to enable graph
-        # plt.show()
-       
-        #trying to get multiple clips from the same video
-        # sorted_point_index = sorted(y)
-        # topN_timestamps = sorted_point_index[-N:]
-        # for t in topN_timestamps:
-        #     print(t)
-        # Find the highest point
+        x = [((p[0] - 1) * (video_duration) / (1000 - 1)) for p in dataPointsArray]
+        y = [-p[1] for p in dataPointsArray]
+
         max_point_index = y.index(max(y))
-        highest_point = (x[max_point_index], y[max_point_index])
+        highest_point = (x[max_point_index],y[max_point_index])
         return highest_point
-    
-    def download(url,minus_timestamp,timestamp, plus_timestamp):
+        
+
+    def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = timestamp-minus_timestamp
         end_time = timestamp+plus_timestamp
         # start_time = 2  # accepts decimal value like 2.3
@@ -77,7 +67,7 @@ class Clipper():
         }
         
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
-            ydl.download(url)
+            ydl.download(self.main_vid_url)
 
     #not required
     def seconds_to_hms(seconds): 

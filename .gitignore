@@ -7,3 +7,5 @@ outputvideos
 frames
 _pycache_
 StitchedVideo.mp4
+.config
+AWSinterface.py
