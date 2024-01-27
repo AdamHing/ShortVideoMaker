@@ -6,19 +6,15 @@ import yt_dlp
 from yt_dlp.utils import download_range_func
 from selenium import webdriver
 import time
-import requests
+
 from bs4 import BeautifulSoup
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome  import ChromeDriverManager
+
 import re
 import urllib.request, urllib.parse
 import json
 from pytube import YouTube
  
 
-# options = Options()
-# options.add_argument('--headless')
 
 #get url
 #use url to get heatmap
@@ -29,6 +25,7 @@ class Clipper():
     def __init__(self, main_vid_url):
         self.main_vid_url = main_vid_url
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
+
 
     def get_most_rewatched_timestamp(self):
    
@@ -55,6 +52,7 @@ class Clipper():
                 print("out of range")
             x_bias = sum(right)-sum(left)
         return x+ x_bias
+
         
 
     def download(self,minus_timestamp,timestamp, plus_timestamp):
