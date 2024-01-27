@@ -5,8 +5,6 @@ from pytube import YouTube
 #from main import Stitcher
 from moviepy.editor import *
 import os
-
-
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 
@@ -19,7 +17,7 @@ output_video_path = "outputvideos/output.mp4"
 watermarkPath = "img/watermark.png"
 minus_timestamp = 15
 plus_timestamp = 30
-
+#https://www.youtube.com/watch?v=T3LLgzO_PrI
 def process_data():
     link1 = link1_entry.get().strip() #top video
     link2 = link2_entry.get().strip() #bottom video
@@ -47,13 +45,11 @@ def process_data():
     elif "www.youtube.com" in link1:
         print("getting video duration")
         #get length of video
-        vid_duration = YouTube(link1).length
-        print(vid_duration)
         
         #data = Clipper.getDataFromFile("heatmap.txt")
-        highest_point = clipper.get_most_rewatched_timestamp(vid_duration)
-        print("Highest point coordinates:", highest_point)
-        timestamp = highest_point[0]
+        timestamp = clipper.get_most_rewatched_timestamp()
+        print("Highest point at {}s:".format(timestamp))
+
 
     clipper.download(minus_timestamp, timestamp,plus_timestamp)
 

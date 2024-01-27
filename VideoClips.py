@@ -6,15 +6,19 @@ import yt_dlp
 from yt_dlp.utils import download_range_func
 from selenium import webdriver
 import time
+import requests
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome  import ChromeDriverManager
+import re
+import urllib.request, urllib.parse
+import json
+from pytube import YouTube
  
 
-options = Options()
-options.add_argument('--headless')
-
+# options = Options()
+# options.add_argument('--headless')
 
 #get url
 #use url to get heatmap
@@ -26,30 +30,31 @@ class Clipper():
         self.main_vid_url = main_vid_url
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
 
-    def get_most_rewatched_timestamp(self, video_duration):
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()),options=options)
-        time.sleep(2)
-        driver.get(self.main_vid_url)
-        time.sleep(8)
-        soup = BeautifulSoup(driver.page_source,"html.parser")
-        heatmap = soup.find("path", {"class": "ytp-heat-map-path"}).get('d')
-        heatmap = heatmap.replace("M 0.0,100.0 ","")
-
-        tripletsArray = heatmap.split("C ")
-        dataPointsArray = []
-        for triplets in tripletsArray:
-            if triplets != "":
-                pointsArray = triplets.split(" ")[:3]
-                for points in pointsArray:
-                    p = points.split(",")
-                    dataPointsArray.append([float(p[0]), float(p[1])])
-
-        x = [((p[0] - 1) * (video_duration) / (1000 - 1)) for p in dataPointsArray]
-        y = [-p[1] for p in dataPointsArray]
-
-        max_point_index = y.index(max(y))
-        highest_point = (x[max_point_index],y[max_point_index])
-        return highest_point
+    def get_most_rewatched_timestamp(self):
+   
+        with yt_dlp.YoutubeDL() as ydl: 
+            info_dict = ydl.extract_info(self.main_vid_url , download=False)
+            heat = info_dict.get('heatmap')
+        vid_duration = YouTube(self.main_vid_url ).length
+        x_points = []
+        y_points = []
+        for idx,i in enumerate(heat):
+            print(list(i.values()),idx)
+            heat_values = list(i.values())[2]
+            y_points.append(heat_values)
+            x_points.append(idx)
+        g = np.argmax(y_points)
+        x = (vid_duration/100)*g
+        left = []
+        right = []
+        for i in range(10):
+            try:
+                left.append(y_points[g-i])
+                right.append(y_points[g+i])
+            except:
+                print("out of range")
+            x_bias = sum(right)-sum(left)
+        return x+ x_bias
         
 
     def download(self,minus_timestamp,timestamp, plus_timestamp):
