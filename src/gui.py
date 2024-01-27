@@ -6,7 +6,6 @@ from pytube import YouTube
 from moviepy.editor import *
 import os
 
-
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 
@@ -45,15 +44,10 @@ def process_data():
         print("using manual_timestamp")
         timestamp = int(manual_timestamp)
     elif "www.youtube.com" in link1:
-        print("getting video duration")
-        #get length of video
-        vid_duration = YouTube(link1).length
-        print(vid_duration)
-        
-        #data = Clipper.getDataFromFile("heatmap.txt")
-        highest_point = clipper.get_most_rewatched_timestamp(vid_duration)
-        print("Highest point coordinates:", highest_point)
-        timestamp = highest_point[0]
+        timestamp = clipper.get_most_rewatched_timestamp()
+        print("Highest point at {}s:".format(timestamp))
+
+
 
     clipper.download(minus_timestamp, timestamp,plus_timestamp)
 
