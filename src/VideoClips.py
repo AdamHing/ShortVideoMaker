@@ -4,14 +4,8 @@ from moviepy.editor import *
 import numpy as np
 import yt_dlp
 from yt_dlp.utils import download_range_func
-from selenium import webdriver
-import time
 
 from bs4 import BeautifulSoup
-
-import re
-import urllib.request, urllib.parse
-import json
 from pytube import YouTube
  
 
@@ -26,9 +20,7 @@ class Clipper():
         self.main_vid_url = main_vid_url
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
 
-
     def get_most_rewatched_timestamp(self):
-   
         with yt_dlp.YoutubeDL() as ydl: 
             info_dict = ydl.extract_info(self.main_vid_url , download=False)
             heat = info_dict.get('heatmap')
@@ -52,8 +44,6 @@ class Clipper():
                 print("out of range")
             x_bias = sum(right)-sum(left)
         return x+ x_bias
-
-        
 
     def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = timestamp-minus_timestamp
@@ -79,8 +69,7 @@ class Clipper():
         hours = seconds // 3600
         minutes = (seconds % 3600) // 60
         remaining_seconds = seconds % 60
-        return hours, minutes, remaining_seconds   
-
+        return hours, minutes, remaining_seconds
 class Stitcher:
     def __init__(self,main_video,fun_video):
         self.main_video = main_video
