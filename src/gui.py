@@ -5,7 +5,6 @@ from pytube import YouTube
 #from main import Stitcher
 from moviepy.editor import *
 import os
-
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 
@@ -46,9 +45,7 @@ def process_data():
     elif "www.youtube.com" in link1:
         timestamp = clipper.get_most_rewatched_timestamp()
         print("Highest point at {}s:".format(timestamp))
-
-
-
+        
     clipper.download(minus_timestamp, timestamp,plus_timestamp)
 
     # if "www.youtube.com" in link1:
