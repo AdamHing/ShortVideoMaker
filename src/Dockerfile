@@ -35,5 +35,10 @@ RUN apt-get update && apt-get install -y \
 RUN pip install -r requirements.txt
 
 
+<<<<<<< HEAD
 
 CMD ["python", "lambda_function.py"]
+=======
+CMD ["python", "./lambda_function.py"]
+
+>>>>>>> 74c1cdb0c0c54ffaba5fb1e03e9ba272a2e8e632
