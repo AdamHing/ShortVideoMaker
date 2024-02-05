@@ -6,22 +6,22 @@ import uuid
 print('Loading function')
 s3 = boto3.client('s3')
 def lambda_handler(event, context):
-    BUCKET = "clipper_bucket"
-    OBJECT = "foo.jpg"
+    
      
     #1. Parse out query string params
     main_link = event['queryStringParameters']['main_link']
     peripheral_link = event['queryStringParameters']['peripheral_link']
-    watermark_path = event['queryStringParameters']['watermark_path']
+    # watermark_path = event['queryStringParameters']['watermark_path']
     captions = event['queryStringParameters']['captions']
     manual_timestamp = event['queryStringParameters']['manual_timestamp']
-    num_clips = event['queryStringParameters']['num_clips']
+    #num_clips = event['queryStringParameters']['num_clips']
 
-    status = process_data(main_link,peripheral_link,watermark_path,captions,manual_timestamp, num_clips)
+    status = process_data(main_link,peripheral_link,captions,manual_timestamp)
 
     if status == "completed":
+        BUCKET = "clipper_bucket"
         #path to the local output video
-        path = f"/outputvideos/outputGREEN.mp4"
+        path = f"tmp/outputGREEN.mp4"
         #generate file name
         OBJECT = uuid.uuid4()+ ".mp4"
         #upload video to s3 file. 
@@ -32,10 +32,7 @@ def lambda_handler(event, context):
                                         Params={"Bucket": BUCKET,"key": OBJECT},
                                         ExpiresIn=400
                                         )
-        # url = s3.generate_presigned_url(
-        #                                 Params={"Bucket": BUCKET,"key": OBJECT},
-        #                                 ExpiresIn=400
-        #                                 )
+  
 
     #2. Construct the body of the response object
     Response = {}
@@ -58,28 +55,3 @@ def lambda_handler(event, context):
 
 #https://okm85hbhd9.execute-api.us-east-2.amazonaws.com/test/transactions?transactionId=6&type=PURCHASE&amount=500
 
-
-
-import logging
-from urllib.parse import unquote_plus
-
-s3_client= boto3.client("s3")
-
-def lambda_handler(event, context):
-    #event contains a list of records
-    for record in event["Records"]:
-        bucket = record['s3']['bucket']['name']
-        key = unquote_plus(record['s3']['object']['key'])
-
-        logging.info(f"key = {key}")
-        tmpkey = key.replace("/",'')
-        logging.info(f"temp key = {tmpkey}")
-
-        download_path = f"/tmp/{uuid.uuid4()}/{tmpkey}"
-        upload_path = f"resized-{tmpkey}"
-
-        s3_client.download_file(bucket, key, download_path)
-        #actual program runs here
-        # do something that recieves data from api and turns it into the below variables.
-        #process_data(main_link,peripheral_link,watermark_path,captions,manual_timestamp, num_clips)
-        s3_client.upload_file(upload_path, f'{bucket}-resized', key)
