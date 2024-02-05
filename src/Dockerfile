@@ -24,7 +24,7 @@
 
 FROM python:3.10
 
-ADD lambda_function.py .
+COPY . /src
 
 RUN pip install -r requirements.txt
 
