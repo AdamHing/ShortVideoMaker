@@ -18,9 +18,9 @@
 
 # # Run the application.
 # CMD ["python", "gui.py"]
+# 1337.to
 
-
-
+# movie name and add mkv look through 
 
 FROM python:3.10
 
@@ -28,8 +28,14 @@ WORKDIR /src
 
 COPY . /src
 
+RUN apt-get update && apt-get install -y \
+    libmagickwand-dev \
+    --no-install-recommends
+
 RUN pip install -r requirements.txt
 
 
-CMD ["python", "./lambda_function.py"]
+
+
+CMD ["python", "lambda_function.py"]
 
