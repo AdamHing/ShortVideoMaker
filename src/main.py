@@ -10,13 +10,18 @@ import os
 import argparse
 import random
 
-#environment variables
-MYVIDEO = "tmp/ClippedVideo.mp4" #top video
-PERIPHERAL_VIDEO = "tmp/MCV.mp4" #botton video
-stitched_video_no_audio_path = "tmp/StitchedVideo_no_audio.mp4"
+
+cwd = os.getcwd()
+print(cwd)
+
+tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
+
+MYVIDEO = tmp_folder+"/ClippedVideo.mp4" #top video
+PERIPHERAL_VIDEO = tmp_folder+"/MCV.mp4" #botton video
+stitched_video_no_audio_path = tmp_folder+"/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
-stitched_video_with_audio_path = "tmp/StitchedVideo_with_audio.mp4"
-watermark_path = "img/watermark.png"
+stitched_video_with_audio_path = tmp_folder+"/StitchedVideo_with_audio.mp4"
+watermarkPath = "img/watermark.png"
 minus_timestamp = 15
 plus_timestamp = 30
 
@@ -71,7 +76,7 @@ def process_data(main_link,peripheral_link,watermark_path,captions,manual_timest
     print("Data processed!")
 
     if captions == True:
-        DynamicSubtitles(stitched_video_with_audio_path)
+        DynamicSubtitles(stitched_video_with_audio_path,tmp_folder)
 
     status="compleated"
     return status
@@ -87,7 +92,7 @@ def main():
     parser.add_argument("manual_timestamp") #optional
     parser.add_argument("num_clips") #optional
     args = parser.parse_args()
-    
+
     process_data(args.main_link,args.peripheral_link,args.watermark_location,args.captions,args.manual_timestamp,args.num_clips)
 
 if __name__ == 'main':

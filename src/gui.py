@@ -11,15 +11,21 @@ import random
 #https://www.youtube.com/watch?v=x0beKqQW3Io
 #MCVido and peripheral video are used interchangeably 
 
-MYVIDEO = "tmp/ClippedVideo.mp4" #top video
-PERIPHERAL_VIDEO = "tmp/MCV.mp4" #botton video
-stitched_video_no_audio_path = "tmp/StitchedVideo_no_audio.mp4"
+cwd = os.getcwd()
+print(cwd)
+
+tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
+
+MYVIDEO = tmp_folder+"/ClippedVideo.mp4" #top video
+PERIPHERAL_VIDEO = tmp_folder+"/MCV.mp4" #botton video
+stitched_video_no_audio_path = tmp_folder+"/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
-stitched_video_with_audio_path = "tmp/StitchedVideo_with_audio.mp4"
-output_video_path = "outputvideos/output.mp4"
+stitched_video_with_audio_path = tmp_folder+"/StitchedVideo_with_audio.mp4"
 watermarkPath = "img/watermark.png"
 minus_timestamp = 15
 plus_timestamp = 30
+
+
 
 peripheral_video_list = [
     "https://www.youtube.com/watch?v=Ujvy-DEA-UM",
@@ -90,7 +96,7 @@ def process_data():
     #     transcriber.transcribe_video()
     #     transcriber.create_video(output_video_path)
     if captions == True:
-        DynamicSubtitles(stitched_video_with_audio_path)
+        DynamicSubtitles(stitched_video_with_audio_path,tmp_folder)
 
 # Create the main window
 root = tk.Tk()

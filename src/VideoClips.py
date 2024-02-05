@@ -6,6 +6,10 @@ import yt_dlp
 from yt_dlp.utils import download_range_func
 #from bs4 import BeautifulSoup
 from pytube import YouTube
+import os
+
+cwd = os.getcwd()
+tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
  
 #get url
 #use url to get heatmap
@@ -59,7 +63,7 @@ class Clipper():
             'verbose': True,
             'download_ranges': download_range_func(None, [(start_time, end_time)]),
             'force_keyframes_at_cuts': True,
-            'outtmpl': os.path.join("tmp/ClippedVideo.mp4"), #destination of downloded video
+            'outtmpl': os.path.join(tmp_folder+"/ClippedVideo.mp4"), #destination of downloded video
         }
         
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
@@ -80,7 +84,7 @@ class Stitcher:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
-        self.result = cv2.VideoWriter("tmp/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
+        self.result = cv2.VideoWriter(tmp_folder+"/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
 
     #depricated 
     #used to clip full length mp4 videos

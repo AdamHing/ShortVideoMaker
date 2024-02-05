@@ -2,12 +2,14 @@ from main import process_data
 import json
 import boto3
 import uuid
+import os
+
+cwd = os.getcwd()
+tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
 
 print('Loading function')
 s3 = boto3.client('s3')
 def lambda_handler(event, context):
-    
-     
     #1. Parse out query string params
     main_link = event['queryStringParameters']['main_link']
     peripheral_link = event['queryStringParameters']['peripheral_link']
@@ -20,10 +22,15 @@ def lambda_handler(event, context):
 
     if status == "completed":
         BUCKET = "clipper_bucket"
-        #path to the local output video
-        path = f"tmp/outputGREEN.mp4"
-        #generate file name
-        OBJECT = uuid.uuid4()+ ".mp4"
+        
+        if captions == True:
+            #path to the local output video
+            path = tmp_folder+"/output.mp4"
+        else:
+            path = tmp_folder+"/StitchedVideo_with_audio.mp4"
+
+            #generate file name
+            OBJECT = uuid.uuid4()+ ".mp4"
         #upload video to s3 file. 
         s3.upload_file(Filename=path,Bucket=BUCKET, Key=OBJECT)
         #generate presigned url
