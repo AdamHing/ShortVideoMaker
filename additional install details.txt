@@ -1,0 +1,4 @@
+download imagemagic
+https://imagemagick.org/script/download.php
+
+and check install legacy utilities during setup
