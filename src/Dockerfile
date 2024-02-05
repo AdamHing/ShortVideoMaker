@@ -24,9 +24,12 @@
 
 FROM python:3.10
 
-ADD lambda_function.py .
+WORKDIR /src
+
+COPY . /src
 
 RUN pip install -r requirements.txt
 
 
 CMD ["python", "./lambda_function.py"]
+
