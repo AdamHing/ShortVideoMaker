@@ -51,9 +51,9 @@ def process_data(main_link,peripheral_link,watermark_path,captions,manual_timest
     #     print("link not valid, using local video")
     #     MYVIDEO="Source_videos/"+link1+"mp4"
     if peripheral_link:
-        YouTube(peripheral_link).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
-    if not os.path.exists("Source_videos/MCV.mp4"):
-        YouTube(random.choice(peripheral_video_list)).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
+        YouTube(peripheral_link,use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
+    if not os.path.isfile(PERIPHERAL_VIDEO):
+        YouTube("https://www.youtube.com/watch?v=Ujvy-DEA-UM",use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
     else:
         print("MC_video already exists, using that one")
 
@@ -87,7 +87,7 @@ def main():
     parser.add_argument("manual_timestamp") #optional
     parser.add_argument("num_clips") #optional
     args = parser.parse_args()
-
+    
     process_data(args.main_link,args.peripheral_link,args.watermark_location,args.captions,args.manual_timestamp,args.num_clips)
 
 if __name__ == 'main':

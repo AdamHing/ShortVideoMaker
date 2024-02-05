@@ -8,11 +8,11 @@ import os
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 import random
-
+#https://www.youtube.com/watch?v=x0beKqQW3Io
 #MCVido and peripheral video are used interchangeably 
 
 MYVIDEO = "tmp/ClippedVideo.mp4" #top video
-MCVIDEO = "Source_videos/MCV.mp4" #botton video
+PERIPHERAL_VIDEO = "tmp/MCV.mp4" #botton video
 stitched_video_no_audio_path = "tmp/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
 stitched_video_with_audio_path = "tmp/StitchedVideo_with_audio.mp4"
@@ -63,13 +63,15 @@ def process_data():
     #     print("link not valid, using local video")
     #     MYVIDEO="Source_videos/"+link1+"mp4"
     if link2:
-        YouTube(link2).streams.filter(progressive=True, file_extension='mp4').first().download(filename=MYVIDEO)
-    if not os.path.exists(MYVIDEO):
-        YouTube(random.choice(peripheral_video_list)).streams.filter(progressive=True, file_extension='mp4').first().download(filename=MYVIDEO)
+        YouTube(link2,use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
+        print("downloading peripheral video")
+
+    if not os.path.isfile(PERIPHERAL_VIDEO):
+        YouTube("https://www.youtube.com/watch?v=Ujvy-DEA-UM",use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
     else:
         print("peripheral video already exists, using that one")
 
-    stitcher = Stitcher(MYVIDEO,MCVIDEO)
+    stitcher = Stitcher(MYVIDEO,PERIPHERAL_VIDEO)
     # stitcher.Clip(30, timestamp,30)
     print("=========1==========")
     stitcher.Crop_stitch()

@@ -6,3 +6,10 @@ make a link to download the video
 
 also containerize 
 
+
+use ml to get matching word deviation
+and correct misinterpreted words 
+
+eg.
+"guns for hire"
+"guns for wire"
