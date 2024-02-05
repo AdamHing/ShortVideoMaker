@@ -29,4 +29,4 @@ ADD lambda_function.py .
 RUN pip install -r requirements.txt
 
 
-CMD ["python", "./main.py"]
+CMD ["python", "./lambda_function.py"]
