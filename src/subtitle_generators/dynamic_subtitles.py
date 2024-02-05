@@ -8,7 +8,7 @@ from cv2 import VideoCapture, CAP_PROP_FPS
 # videofilename = "StitchedVideo_W_audio.mp4"
 
 def DynamicSubtitles(videofilename):
-  print (videofilename)
+  print(videofilename)
   audiofilename = videofilename.replace(".mp4",'.mp3')
   # Create the ffmpeg input stream
   input_stream = ffmpeg.input(videofilename)
@@ -37,9 +37,9 @@ def DynamicSubtitles(videofilename):
 
   print(wordlevel_info)
 
-  with open('temp/data.json', 'w') as f:
+  with open('tmp/data.json', 'w') as f:
       json.dump(wordlevel_info, f,indent=4)
-  with open('temp/data.json', 'r') as f:
+  with open('tmp/data.json', 'r') as f:
       wordlevel_info_modified = json.load(f)
   print(wordlevel_info_modified) 
 
@@ -162,7 +162,6 @@ def DynamicSubtitles(videofilename):
         word_clips.append(word_clip)
         word_clips.append(word_clip_space)  
 
-
       for highlight_word in xy_textclips_positions:
         word_clip_highlight = TextClip(highlight_word['word'], font = font,fontsize=fontsize, color=color,bg_color = bgcolor).set_start(highlight_word['start']).set_duration(highlight_word['duration'])
         word_clip_highlight = word_clip_highlight.set_position((highlight_word['x_pos'], highlight_word['y_pos']))
@@ -194,7 +193,7 @@ def DynamicSubtitles(videofilename):
   vidcap = VideoCapture(videofilename)
   fps = vidcap.get(CAP_PROP_FPS)
   print(fps)
-  final_video.write_videofile("outputvideos/outputGREEN.mp4", fps, codec="libx264", audio_codec="aac")
+  final_video.write_videofile("tmp/outputGREEN.mp4", fps, codec="libx264", audio_codec="aac")
 
 # videofilename = "StitchedVideo_with_audio.mp4"
 # DynamicSubtitles(videofilename)

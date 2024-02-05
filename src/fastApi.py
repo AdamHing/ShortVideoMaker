@@ -6,12 +6,13 @@ from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 from pydantic import BaseModel
 from fastapi import FastAPI
-MAIN_VIDEO = "Source_videos/ClippedVideo.mp4" #top video
+
+MAIN_VIDEO = "tmp/ClippedVideo.mp4" #top video
 PERIPHERAL_VIDEO = "Source_videos/MCV.mp4" #botton video
 
-stitched_video_no_audio_path = "temp/StitchedVideo_no_audio.mp4"
+stitched_video_no_audio_path = "tmp/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
-stitched_video_with_audio_path = "temp/StitchedVideo_with_audio.mp3"
+stitched_video_with_audio_path = "tmp/StitchedVideo_with_audio.mp3"
 output_video_path = "outputvideos/output.mp4"
 watermarkPath = "img/watermark.png"
 minus_timestamp = 15
@@ -35,10 +36,10 @@ async def read_item(main_vid: str, peripheral_vid: Optional[str] = None, manual_
         timestamp = highest_point[0]
     clipper.download(minus_timestamp, timestamp,plus_timestamp)
     if peripheral_vid:
-        YouTube(peripheral_vid).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/MCV.mp4')
+        YouTube(peripheral_vid).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
     if not os.path.exists("Source_videos/MCV.mp4"):
         #backup default video
-        YouTube("https://www.youtube.com/watch?v=ZkHKGWKq9mY").streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/MCV.mp4')
+        YouTube("https://www.youtube.com/watch?v=ZkHKGWKq9mY").streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
     else:
         print("MC_video already exists, using that one")
     stitcher = Stitcher(MAIN_VIDEO,PERIPHERAL_VIDEO)
@@ -57,9 +58,6 @@ async def read_item(main_vid: str, peripheral_vid: Optional[str] = None, manual_
 
 #uvicorn main:app --reload
 #============================================================================================
-
-
-
 
 
 class FormData(BaseModel):

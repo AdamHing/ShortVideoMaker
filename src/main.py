@@ -8,20 +8,27 @@ from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 import os
 import argparse
-
+import random
 
 #environment variables
-MYVIDEO = "Source_videos/ClippedVideo.mp4" #top video
-MCVIDEO = "Source_videos/MCV.mp4" #botton video
-stitched_video_no_audio_path = "temp/StitchedVideo_no_audio.mp4"
+MYVIDEO = "tmp/ClippedVideo.mp4" #top video
+PERIPHERAL_VIDEO = "tmp/MCV.mp4" #botton video
+stitched_video_no_audio_path = "tmp/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
-stitched_video_with_audio_path = "temp/StitchedVideo_with_audio.mp4"
-output_video_path = "outputvideos/output.mp4"
+stitched_video_with_audio_path = "tmp/StitchedVideo_with_audio.mp4"
 watermark_path = "img/watermark.png"
 minus_timestamp = 15
 plus_timestamp = 30
 
+peripheral_video_list = [
+    "https://www.youtube.com/watch?v=Ujvy-DEA-UM",
+    "https://www.youtube.com/watch?v=ZkHKGWKq9mY",
+    "https://www.youtube.com/watch?v=JwP6sCqmPAs"
+                         ]
+
 def process_data(main_link,peripheral_link,watermark_path,captions,manual_timestamp, num_clips):
+    if not watermark_path:
+        watermark_path = "img/watermark.png"
     # Your code for processing data goes here
     # Use link1, link2, num_clips, and captions as needed
     print(f"Link 1: {main_link}")
@@ -44,13 +51,13 @@ def process_data(main_link,peripheral_link,watermark_path,captions,manual_timest
     #     print("link not valid, using local video")
     #     MYVIDEO="Source_videos/"+link1+"mp4"
     if peripheral_link:
-        YouTube(peripheral_link).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/MCV.mp4')
+        YouTube(peripheral_link).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
     if not os.path.exists("Source_videos/MCV.mp4"):
-        YouTube("https://www.youtube.com/watch?v=ZkHKGWKq9mY").streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/MCV.mp4')
+        YouTube(random.choice(peripheral_video_list)).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
     else:
         print("MC_video already exists, using that one")
 
-    stitcher = Stitcher(MYVIDEO,MCVIDEO)
+    stitcher = Stitcher(MYVIDEO,PERIPHERAL_VIDEO)
     # stitcher.Clip(30, timestamp,30)
 
     print("=========1==========")

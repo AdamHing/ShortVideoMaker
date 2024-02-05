@@ -4,12 +4,9 @@ from moviepy.editor import *
 import numpy as np
 import yt_dlp
 from yt_dlp.utils import download_range_func
-
-from bs4 import BeautifulSoup
+#from bs4 import BeautifulSoup
 from pytube import YouTube
  
-
-
 #get url
 #use url to get heatmap
 #get length of video
@@ -48,15 +45,21 @@ class Clipper():
     def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = timestamp-minus_timestamp
         end_time = timestamp+plus_timestamp
-        # start_time = 2  # accepts decimal value like 2.3
-        # end_time = 7  
+
+        # if timestamp:
+        #     start_time = timestamp-minus_timestamp
+        #     end_time = timestamp+plus_timestamp
+        # else:
+        #     start_time = minus_timestamp
+        #     end_time = plus_timestamp
+ 
         yt_opts = {
             #"format": "mp4[height=720]",
             "format": "best",
             'verbose': True,
             'download_ranges': download_range_func(None, [(start_time, end_time)]),
             'force_keyframes_at_cuts': True,
-            'outtmpl': os.path.join("Source_videos/ClippedVideo.mp4"),
+            'outtmpl': os.path.join("tmp/ClippedVideo.mp4"), #destination of downloded video
         }
         
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
@@ -77,7 +80,7 @@ class Stitcher:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
-        self.result = cv2.VideoWriter("temp/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
+        self.result = cv2.VideoWriter("tmp/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
 
     #depricated 
     #used to clip full length mp4 videos
