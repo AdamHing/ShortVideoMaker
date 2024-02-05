@@ -32,3 +32,4 @@ RUN pip install -r requirements.txt
 
 
 CMD ["python", "./lambda_function.py"]
+
