@@ -21,7 +21,7 @@ PERIPHERAL_VIDEO = tmp_folder+"/MCV.mp4" #botton video
 stitched_video_no_audio_path = tmp_folder+"/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
 stitched_video_with_audio_path = tmp_folder+"/StitchedVideo_with_audio.mp4"
-watermarkPath = "img/watermark.png"
+watermarkPath = os.path.abspath(os.path.join(cwd, os.pardir))+"/img/watermark.png"
 minus_timestamp = 15
 plus_timestamp = 30
 

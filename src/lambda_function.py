@@ -9,7 +9,7 @@ tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
 
 print('Loading function')
 s3 = boto3.client('s3')
-def lambda_handler(event, context):
+def c(event, context):
     #1. Parse out query string params
     main_link = event['queryStringParameters']['main_link']
     peripheral_link = event['queryStringParameters']['peripheral_link']
@@ -40,7 +40,6 @@ def lambda_handler(event, context):
                                         ExpiresIn=400
                                         )
   
-
     #2. Construct the body of the response object
     Response = {}
     Response['status'] = status

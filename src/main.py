@@ -21,15 +21,15 @@ PERIPHERAL_VIDEO = tmp_folder+"/MCV.mp4" #botton video
 stitched_video_no_audio_path = tmp_folder+"/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
 stitched_video_with_audio_path = tmp_folder+"/StitchedVideo_with_audio.mp4"
-watermarkPath = "img/watermark.png"
+os.path.abspath(os.path.join(cwd, os.pardir))+"/img/watermark.png"
 minus_timestamp = 15
 plus_timestamp = 30
 
-peripheral_video_list = [
-    "https://www.youtube.com/watch?v=Ujvy-DEA-UM",
-    "https://www.youtube.com/watch?v=ZkHKGWKq9mY",
-    "https://www.youtube.com/watch?v=JwP6sCqmPAs"
-                         ]
+# peripheral_video_list = [
+#     "https://www.youtube.com/watch?v=Ujvy-DEA-UM",
+#     "https://www.youtube.com/watch?v=ZkHKGWKq9mY",
+#     "https://www.youtube.com/watch?v=JwP6sCqmPAs"
+#                          ]
 
 def process_data(main_link,peripheral_link,watermark_path,captions,manual_timestamp, num_clips):
     if not watermark_path:
@@ -83,20 +83,21 @@ def process_data(main_link,peripheral_link,watermark_path,captions,manual_timest
 
 
 #this is only used if you want to run this without lambda function
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("main_link")
-    parser.add_argument("peripheral_link") #optional
-    parser.add_argument("watermark_path") #optional
-    parser.add_argument("captions") #optional
-    parser.add_argument("manual_timestamp") #optional
-    parser.add_argument("num_clips") #optional
-    args = parser.parse_args()
 
-    process_data(args.main_link,args.peripheral_link,args.watermark_location,args.captions,args.manual_timestamp,args.num_clips)
+# def main():
+#     parser = argparse.ArgumentParser()
+#     parser.add_argument("main_link")
+#     parser.add_argument("peripheral_link") #optional
+#     parser.add_argument("watermark_path") #optional
+#     parser.add_argument("captions") #optional
+#     parser.add_argument("manual_timestamp") #optional
+#     parser.add_argument("num_clips") #optional
+#     args = parser.parse_args()
 
-if __name__ == 'main':
-    main()
+#     process_data(args.main_link,args.peripheral_link,args.watermark_location,args.captions,args.manual_timestamp,args.num_clips)
+
+# if __name__ == 'main':
+#     main()
 
 
 

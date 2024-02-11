@@ -6,6 +6,4 @@ services:
     build: 
       context: ./src
       dockerfile: Dockerfile
-    container_name: server
-    ports:
-      - '8000:8000'
+    container_name: Clippr
