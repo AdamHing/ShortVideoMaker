@@ -26,7 +26,6 @@ minus_timestamp = 15
 plus_timestamp = 30
 
 
-
 peripheral_video_list = [
     "https://www.youtube.com/watch?v=Ujvy-DEA-UM",
     "https://www.youtube.com/watch?v=ZkHKGWKq9mY",

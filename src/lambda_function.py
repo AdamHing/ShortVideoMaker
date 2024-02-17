@@ -9,7 +9,7 @@ tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
 
 print('Loading function')
 s3 = boto3.client('s3')
-def c(event, context):
+def lambda_handler(event, context):
     #1. Parse out query string params
     main_link = event['queryStringParameters']['main_link']
     peripheral_link = event['queryStringParameters']['peripheral_link']
@@ -17,11 +17,10 @@ def c(event, context):
     captions = event['queryStringParameters']['captions']
     manual_timestamp = event['queryStringParameters']['manual_timestamp']
     #num_clips = event['queryStringParameters']['num_clips']
+    try: 
+        process_data(main_link,peripheral_link,captions,manual_timestamp)
 
-    status = process_data(main_link,peripheral_link,captions,manual_timestamp)
-
-    if status == "completed":
-        BUCKET = "clipper_bucket"
+        BUCKET = "clipperbucket"
         
         if captions == True:
             #path to the local output video
@@ -39,10 +38,13 @@ def c(event, context):
                                         Params={"Bucket": BUCKET,"key": OBJECT},
                                         ExpiresIn=400
                                         )
+    except:
+        print("ran exception")
+        url= "fake url"
   
     #2. Construct the body of the response object
     Response = {}
-    Response['status'] = status
+
     Response['url'] = url
     Response['message'] = 'Hello from Lambda land'
     

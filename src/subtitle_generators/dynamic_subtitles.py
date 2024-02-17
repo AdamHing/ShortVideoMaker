@@ -3,8 +3,6 @@ import json
 import whisper
 from moviepy.editor import *
 from cv2 import VideoCapture, CAP_PROP_FPS
-
-
 # videofilename = "StitchedVideo_W_audio.mp4"
 
 def DynamicSubtitles(videofilename, tmp_folder):
@@ -20,7 +18,7 @@ def DynamicSubtitles(videofilename, tmp_folder):
   output_stream = ffmpeg.overwrite_output(output_stream)
   ffmpeg.run(output_stream)
   #might take some time (approx 3- 5min depending on audio length)
-  model = whisper.load_model("medium")
+  model = whisper.load_model("small.en")
   result = model.transcribe(audiofilename,word_timestamps=True)
   print(result)
   # each subtitle segment
