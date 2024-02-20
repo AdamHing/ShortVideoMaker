@@ -6,6 +6,9 @@ import yt_dlp
 from yt_dlp.utils import download_range_func
 #from bs4 import BeautifulSoup
 from pytube import YouTube
+import os
+
+tmp_folder = "/tmp"
  
 #get url
 #use url to get heatmap
@@ -40,7 +43,7 @@ class Clipper():
             except:
                 print("out of range")
             x_bias = sum(right)-sum(left)
-        return x+ x_bias
+        return x + x_bias
 
     def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = timestamp-minus_timestamp
@@ -59,7 +62,7 @@ class Clipper():
             'verbose': True,
             'download_ranges': download_range_func(None, [(start_time, end_time)]),
             'force_keyframes_at_cuts': True,
-            'outtmpl': os.path.join("tmp/ClippedVideo.mp4"), #destination of downloded video
+            'outtmpl': os.path.join(tmp_folder+"/ClippedVideo.mp4"), #destination of downloded video
         }
         
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
@@ -80,7 +83,7 @@ class Stitcher:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
-        self.result = cv2.VideoWriter("tmp/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
+        self.result = cv2.VideoWriter(tmp_folder+"/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
 
     #depricated 
     #used to clip full length mp4 videos
@@ -121,10 +124,16 @@ class Stitcher:
         cap.release() 
         cv2.destroyAllWindows()
 
-    def Audio_watermark(self,StitchedVideoNoAudio,watermarkPath,StitchedVideo_W_audio_PATH):
+    def Audio_watermark(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
         video_clip = VideoFileClip(StitchedVideoNoAudio)
         #add watermark 
-        logo = (ImageClip(watermarkPath)
+
+        files = os.listdir(directory)
+        # Filter the list to only include image files
+        image_files = [file for file in files if file.endswith(('.jpg', '.jpeg', '.png',))]
+
+
+        logo = (ImageClip("temp/watermark.png")
                 .set_duration(video_clip.duration)
                 .resize(height=50) # if you need to resize...
                 .margin(right=8, top=8, opacity=0) # (optional) logo-border padding

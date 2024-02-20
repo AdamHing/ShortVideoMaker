@@ -3,11 +3,9 @@ import json
 import whisper
 from moviepy.editor import *
 from cv2 import VideoCapture, CAP_PROP_FPS
-
-
 # videofilename = "StitchedVideo_W_audio.mp4"
 
-def DynamicSubtitles(videofilename):
+def DynamicSubtitles(videofilename, tmp_folder):
   print(videofilename)
   audiofilename = videofilename.replace(".mp4",'.mp3')
   # Create the ffmpeg input stream
@@ -20,7 +18,7 @@ def DynamicSubtitles(videofilename):
   output_stream = ffmpeg.overwrite_output(output_stream)
   ffmpeg.run(output_stream)
   #might take some time (approx 3- 5min depending on audio length)
-  model = whisper.load_model("medium")
+  model = whisper.load_model("small.en")
   result = model.transcribe(audiofilename,word_timestamps=True)
   print(result)
   # each subtitle segment
@@ -37,9 +35,9 @@ def DynamicSubtitles(videofilename):
 
   print(wordlevel_info)
 
-  with open('tmp/data.json', 'w') as f:
+  with open(tmp_folder+'/data.json', 'w') as f:
       json.dump(wordlevel_info, f,indent=4)
-  with open('tmp/data.json', 'r') as f:
+  with open(tmp_folder+'/data.json', 'r') as f:
       wordlevel_info_modified = json.load(f)
   print(wordlevel_info_modified) 
 
@@ -193,7 +191,7 @@ def DynamicSubtitles(videofilename):
   vidcap = VideoCapture(videofilename)
   fps = vidcap.get(CAP_PROP_FPS)
   print(fps)
-  final_video.write_videofile("tmp/outputGREEN.mp4", fps, codec="libx264", audio_codec="aac")
+  final_video.write_videofile(tmp_folder+"/output.mp4", fps, codec="libx264", audio_codec="aac")
 
 # videofilename = "StitchedVideo_with_audio.mp4"
 # DynamicSubtitles(videofilename)
