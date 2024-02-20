@@ -1,84 +1,78 @@
-
 from pytube import YouTube
 #from main import Stitcher
 from moviepy.editor import *
 import os
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
-import os
-import argparse
-import random
+class main:
+    def __init__(self,main_link,peripheral_link,watermark_path,captions,manual_timestamp=False):
+        self.main_link = main_link
+        self.peripheral_link = peripheral_link
+        self.watermark_path = watermark_path
+        self.captions = captions
+        self.manual_timestamp = manual_timestamp
+        # self.num_clips = num_clips
+        self.tmp_folder = "tmp"
+        self.minus_timestamp = 15
+        self.plus_timestamp = 30
 
+        # peripheral_video_list = [
+        #     "https://www.youtube.com/watch?v=Ujvy-DEA-UM",
+        #     "https://www.youtube.com/watch?v=ZkHKGWKq9mY",
+        #     "https://www.youtube.com/watch?v=JwP6sCqmPAs"
+        #                          ]
 
-cwd = os.getcwd()
-print(cwd)
+    def process_data(self):
+        # Your code for processing data goes here
+        # Use link1, link2, num_clips, and captions as needed
+        print(f"Link 1: {self.main_link}")
+        print(f"Link 2: {self.peripheral_link}")
 
-tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
+        clipper = Clipper(self.main_link)
+        if self.manual_timestamp:
+            print("using manual_timestamp")
+            timestamp = int(self.manual_timestamp)
+        elif "www.youtube.com" in self.main_link:
+            timestamp = clipper.get_most_rewatched_timestamp()
+            print("Highest point at {}s:".format(timestamp))
 
-MYVIDEO = tmp_folder+"/ClippedVideo.mp4" #top video
-PERIPHERAL_VIDEO = tmp_folder+"/MCV.mp4" #botton video
-stitched_video_no_audio_path = tmp_folder+"/StitchedVideo_no_audio.mp4"
-# name and location of stitched video with audio file. 
-stitched_video_with_audio_path = tmp_folder+"/StitchedVideo_with_audio.mp4"
-os.path.abspath(os.path.join(cwd, os.pardir))+"/img/watermark.png"
-minus_timestamp = 15
-plus_timestamp = 30
+        else:
+            return "could not get timestamp"
 
-# peripheral_video_list = [
-#     "https://www.youtube.com/watch?v=Ujvy-DEA-UM",
-#     "https://www.youtube.com/watch?v=ZkHKGWKq9mY",
-#     "https://www.youtube.com/watch?v=JwP6sCqmPAs"
-#                          ]
+        clipper.download(self.minus_timestamp, timestamp,self.plus_timestamp)
 
-def process_data(main_link,peripheral_link,watermark_path,captions,manual_timestamp, num_clips):
-    if not watermark_path:
-        watermark_path = "img/watermark.png"
-    # Your code for processing data goes here
-    # Use link1, link2, num_clips, and captions as needed
-    print(f"Link 1: {main_link}")
-    print(f"Link 2: {peripheral_link}")
+        # if "www.youtube.com" in link1:
+        #     print("downloading video")
+        #     Clipper.download(link1,minus_timestamp, timestamp,plus_timestamp)
+        # else:
+        #     print("link not valid, using local video")
+        #     MYVIDEO="Source_videos/"+link1+"mp4"
+        peripheral_video = self.tmp_folder+"/MCV.mp4"
+        if self.peripheral_link:
+            YouTube(self.peripheral_link,use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=peripheral_video)
+        if not os.path.isfile(peripheral_video):
+            YouTube("https://www.youtube.com/watch?v=Ujvy-DEA-UM",use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=peripheral_video)
+        else:
+            print("MC_video already exists, using that one")
 
-    clipper = Clipper(main_link)
-    if manual_timestamp:
-        print("using manual_timestamp")
-        timestamp = int(manual_timestamp)
-    elif "www.youtube.com" in main_link:
-        timestamp = clipper.get_most_rewatched_timestamp()
-        print("Highest point at {}s:".format(timestamp))
+        stitcher = Stitcher(self.tmp_folder+"/ClippedVideo.mp4",peripheral_video)
+        # stitcher.Clip(30, timestamp,30)
 
-    clipper.download(minus_timestamp, timestamp,plus_timestamp)
+        print("=========1==========")
+        stitcher.Crop_stitch()
+        print("=========2==========")
+        stitcher.Audio_watermark(self.tmp_folder+"/StitchedVideo_no_audio.mp4",self.watermark_path,self.tmp_folder+"/StitchedVideo_with_audio.mp4")
+        print("=========3==========")
+        print(f"Number of Clips: {self.num_clips}")
+        print(f"Captions: {self.captions}")
+        print(f"Timestamp: {timestamp}")
+        print("Data processed!")
 
-    # if "www.youtube.com" in link1:
-    #     print("downloading video")
-    #     Clipper.download(link1,minus_timestamp, timestamp,plus_timestamp)
-    # else:
-    #     print("link not valid, using local video")
-    #     MYVIDEO="Source_videos/"+link1+"mp4"
-    if peripheral_link:
-        YouTube(peripheral_link,use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
-    if not os.path.isfile(PERIPHERAL_VIDEO):
-        YouTube("https://www.youtube.com/watch?v=Ujvy-DEA-UM",use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
-    else:
-        print("MC_video already exists, using that one")
+        if self.captions == True:
+            DynamicSubtitles(self.tmp_folder+"/StitchedVideo_with_audio.mp4",self.tmp_folder)
 
-    stitcher = Stitcher(MYVIDEO,PERIPHERAL_VIDEO)
-    # stitcher.Clip(30, timestamp,30)
-
-    print("=========1==========")
-    stitcher.Crop_stitch()
-    print("=========2==========")
-    stitcher.Audio_watermark(stitched_video_no_audio_path,watermark_path,stitched_video_with_audio_path)
-    print("=========3==========")
-    print(f"Number of Clips: {num_clips}")
-    print(f"Captions: {captions}")
-    print(f"Timestamp: {timestamp}")
-    print("Data processed!")
-
-    if captions == True:
-        DynamicSubtitles(stitched_video_with_audio_path,tmp_folder)
-
-    status="compleated"
-    return status
+        status="compleated"
+        return status
 
 
 #this is only used if you want to run this without lambda function

@@ -8,8 +8,7 @@ from yt_dlp.utils import download_range_func
 from pytube import YouTube
 import os
 
-cwd = os.getcwd()
-tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
+tmp_folder = "/tmp"
  
 #get url
 #use url to get heatmap
@@ -44,7 +43,7 @@ class Clipper():
             except:
                 print("out of range")
             x_bias = sum(right)-sum(left)
-        return x+ x_bias
+        return x + x_bias
 
     def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = timestamp-minus_timestamp
@@ -125,10 +124,16 @@ class Stitcher:
         cap.release() 
         cv2.destroyAllWindows()
 
-    def Audio_watermark(self,StitchedVideoNoAudio,watermarkPath,StitchedVideo_W_audio_PATH):
+    def Audio_watermark(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
         video_clip = VideoFileClip(StitchedVideoNoAudio)
         #add watermark 
-        logo = (ImageClip(watermarkPath)
+
+        files = os.listdir(directory)
+        # Filter the list to only include image files
+        image_files = [file for file in files if file.endswith(('.jpg', '.jpeg', '.png',))]
+
+
+        logo = (ImageClip("temp/watermark.png")
                 .set_duration(video_clip.duration)
                 .resize(height=50) # if you need to resize...
                 .margin(right=8, top=8, opacity=0) # (optional) logo-border padding

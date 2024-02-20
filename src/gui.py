@@ -1,13 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
-#from BlackSubtitles import VideoTranscriber
 from pytube import YouTube
-#from main import Stitcher
 from moviepy.editor import *
 import os
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
-import random
+import boto3
+import uuid
 #https://www.youtube.com/watch?v=x0beKqQW3Io
 #MCVido and peripheral video are used interchangeably 
 
@@ -21,7 +20,7 @@ PERIPHERAL_VIDEO = tmp_folder+"/MCV.mp4" #botton video
 stitched_video_no_audio_path = tmp_folder+"/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
 stitched_video_with_audio_path = tmp_folder+"/StitchedVideo_with_audio.mp4"
-watermarkPath = os.path.abspath(os.path.join(cwd, os.pardir))+"/img/watermark.png"
+watermarkPath = os.path.abspath(os.path.join(cwd, os.pardir))+"/ShortVideoMaker/img/watermark.png"
 minus_timestamp = 15
 plus_timestamp = 30
 
@@ -95,12 +94,32 @@ def process_data():
     #     transcriber.transcribe_video()
     #     transcriber.create_video(output_video_path)
     if captions == True:
+        print("doing captions")
         DynamicSubtitles(stitched_video_with_audio_path,tmp_folder)
+    
+    
+    s3out = boto3.client('s3',region_name='us-east-2')
+    BUCKET = "clipperbucket"
+    if captions == True:
+        #path to the local output video
+        path =tmp_folder + "/output.mp4"
+    else:
+        path =tmp_folder + "/StitchedVideo_with_audio.mp4"
 
+        #generate file name
+        OBJECT = uuid.uuid4()+ ".mp4"
+    #upload video to s3 file. 
+    s3out.upload_file(Filename=path,Bucket=BUCKET, Key=OBJECT)
+    #generate presigned url
+    url = s3out.generate_presigned_url(
+                                    'get_object',
+                                    Params={"Bucket": BUCKET,"key": OBJECT},
+                                    ExpiresIn=400
+                                    )
 # Create the main window
 root = tk.Tk()
 root.title("Clippr")
-root.iconbitmap("img/icon.ico")
+#root.iconbitmap("/img/icon.ico")
 # Set the background color to black
 root.configure(bg="#000000")
 # Configure a dark theme
