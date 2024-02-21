@@ -128,12 +128,12 @@ class Stitcher:
         video_clip = VideoFileClip(StitchedVideoNoAudio)
         #add watermark 
 
-        files = os.listdir(directory)
         # Filter the list to only include image files
-        image_files = [file for file in files if file.endswith(('.jpg', '.jpeg', '.png',))]
+        
+        files = os.listdir("tmp")
+        image_files = [file for file in files if file.endswith(('.jpg', '.jpeg', '.png'))][0]
 
-
-        logo = (ImageClip("temp/watermark.png")
+        logo = (ImageClip("tmp/"+str(image_files))
                 .set_duration(video_clip.duration)
                 .resize(height=50) # if you need to resize...
                 .margin(right=8, top=8, opacity=0) # (optional) logo-border padding

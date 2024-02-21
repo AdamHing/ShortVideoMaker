@@ -1,12 +1,8 @@
-from main import helper
+from main import main
 import json
 import boto3
 import uuid
-import io
 import os
-
-
-
 #env variables
 BUCKET = os.environ['BUCKET']
 ACCESS_KEY_ID = os.environ['ACCESS_KEY_ID']
@@ -21,36 +17,34 @@ def lambda_handler(event, context):
     manual_timestamp = event['queryStringParameters']['manual_timestamp']
     #num_clips = event['queryStringParameters']['num_clips']
 
-
-    mainhelperthing = helper(main_link,peripheral_link,watermark_path,captions,manual_timestamp)
-    status = mainhelperthing.process_data()
-    print(status)
-
     s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY_ID, 
                                     aws_secret_access_key=SECRET_ACCESS_KEY, 
                                     region_name="us-east-2")
 
-    s3 = boto3.resource('s3', aws_access_key_id=ACCESS_KEY_ID, 
-                                        aws_secret_access_key=SECRET_ACCESS_KEY, 
-                                        region_name="us-east-2")
+    s3_client.download_file("clipperbucket", "WaterMarks/watermark.png", r"tmp\watermark.png")
 
+    try:
+        mainprocess = main(main_link,peripheral_link,captions)
+        status = mainprocess.process_data()
+        print(status)
 
-    path = "tmp/StitchedVideo_with_audio.mp4"
-    # generate a unique ID for each video
-    OBJECT = str(uuid.uuid4())+".mp4"
-    #upload video to s3 file. 
-    s3_client.upload_file(Filename=path,Bucket=BUCKET, Key=OBJECT)
-
-    url = s3_client.generate_presigned_url(
-                            ClientMethod='get_object',
-                            Params={"Bucket": BUCKET,"Key": OBJECT},
-                            ExpiresIn=400
-                            )
-  
+        OBJECT = str(uuid.uuid4())+".mp4"
+        #upload video to s3 file. 
+        s3_client.upload_file(Filename="tmp/StitchedVideo_with_audio.mp4",Bucket=BUCKET, Key=OBJECT)
+        # generate a unique ID for each video
+        url = s3_client.generate_presigned_url(
+                                ClientMethod='get_object',
+                                Params={"Bucket": BUCKET,"Key": OBJECT},
+                                ExpiresIn=400
+                                )
+    except:
+        print("failed to run mainprocess")
+    
+    url = "fakeURL"
     #2. Construct the body of the response object
     Response = {}
     Response['url'] = url
-    Response['status'] = 
+    Response['status'] = "its working IG"
     Response['message'] = 'Hello from Lambda land'
     
     #3. Construct http response object

@@ -5,10 +5,10 @@ import os
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
 class main:
-    def __init__(self,main_link,peripheral_link,watermark_path,captions,manual_timestamp=False):
+    def __init__(self,main_link,peripheral_link,captions,manual_timestamp=False):
         self.main_link = main_link
         self.peripheral_link = peripheral_link
-        self.watermark_path = watermark_path
+        # self.watermark_path = watermark_path
         self.captions = captions
         self.manual_timestamp = manual_timestamp
         # self.num_clips = num_clips
@@ -61,9 +61,9 @@ class main:
         print("=========1==========")
         stitcher.Crop_stitch()
         print("=========2==========")
-        stitcher.Audio_watermark(self.tmp_folder+"/StitchedVideo_no_audio.mp4",self.watermark_path,self.tmp_folder+"/StitchedVideo_with_audio.mp4")
+        stitcher.Audio_watermark(self.tmp_folder+"/StitchedVideo_no_audio.mp4",self.tmp_folder+"/StitchedVideo_with_audio.mp4")
         print("=========3==========")
-        print(f"Number of Clips: {self.num_clips}")
+        # print(f"Number of Clips: {self.num_clips}")
         print(f"Captions: {self.captions}")
         print(f"Timestamp: {timestamp}")
         print("Data processed!")
