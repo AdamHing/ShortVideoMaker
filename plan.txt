@@ -13,3 +13,7 @@ and correct misinterpreted words
 eg.
 "guns for hire"
 "guns for wire"
+
+
+
+to save space we can over write the og peripheral.mp4 with the stichedvideo.mp4
