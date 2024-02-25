@@ -12,7 +12,7 @@ class main:
         self.captions = captions
         self.manual_timestamp = manual_timestamp
         # self.num_clips = num_clips
-        self.tmp_folder = "tmp"
+        self.tmp_folder = "/tmp"
         self.minus_timestamp = 15
         self.plus_timestamp = 30
 
@@ -23,23 +23,32 @@ class main:
         #                          ]
 
     def process_data(self):
+        status = []
         # Your code for processing data goes here
         # Use link1, link2, num_clips, and captions as needed
         print(f"Link 1: {self.main_link}")
         print(f"Link 2: {self.peripheral_link}")
+        try:
+            clipper = Clipper(self.main_link)
+        except:
+            status.append("1")
 
-        clipper = Clipper(self.main_link)
-        if self.manual_timestamp:
-            print("using manual_timestamp")
-            timestamp = int(self.manual_timestamp)
-        elif "www.youtube.com" in self.main_link:
-            timestamp = clipper.get_most_rewatched_timestamp()
-            print("Highest point at {}s:".format(timestamp))
+        try:
+            if self.manual_timestamp:
+                print("using manual_timestamp")
+                timestamp = int(self.manual_timestamp)
+            elif "www.youtube.com" in self.main_link:
+                timestamp = clipper.get_most_rewatched_timestamp()
+                print("Highest point at {}s:".format(timestamp))
+            else:
+                return "could not get timestamp"
+        except:
+            status.append("2")
 
-        else:
-            return "could not get timestamp"
-
-        clipper.download(self.minus_timestamp, timestamp,self.plus_timestamp)
+        try:
+            clipper.download(self.minus_timestamp, timestamp,self.plus_timestamp)
+        except:
+            status.append("3")
 
         # if "www.youtube.com" in link1:
         #     print("downloading video")
@@ -48,30 +57,41 @@ class main:
         #     print("link not valid, using local video")
         #     MYVIDEO="Source_videos/"+link1+"mp4"
         peripheral_video = self.tmp_folder+"/MCV.mp4"
-        if self.peripheral_link:
-            YouTube(self.peripheral_link,use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=peripheral_video)
-        if not os.path.isfile(peripheral_video):
-            YouTube("https://www.youtube.com/watch?v=Ujvy-DEA-UM",use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=peripheral_video)
-        else:
-            print("MC_video already exists, using that one")
-
-        stitcher = Stitcher(self.tmp_folder+"/ClippedVideo.mp4",peripheral_video)
+        try:
+            if self.peripheral_link:
+                YouTube(self.peripheral_link,use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=peripheral_video)
+            if not os.path.isfile(peripheral_video):
+                YouTube("https://www.youtube.com/watch?v=Ujvy-DEA-UM",use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=peripheral_video)
+            else:
+                print("MC_video already exists, using that one")
+        except:
+            status.append("4")
+        try:
+            stitcher = Stitcher(self.tmp_folder+"/ClippedVideo.mp4",peripheral_video)
+        except:
+            status.append("5")
         # stitcher.Clip(30, timestamp,30)
 
         print("=========1==========")
-        stitcher.Crop_stitch()
+        try:
+            stitcher.Crop_stitch()
+        except:
+            status.append("6")
         print("=========2==========")
-        stitcher.Audio_watermark(self.tmp_folder+"/StitchedVideo_no_audio.mp4",self.tmp_folder+"/StitchedVideo_with_audio.mp4")
+        try:
+            stitcher.Audio_watermark(self.tmp_folder+"/StitchedVideo_no_audio.mp4",self.tmp_folder+"/StitchedVideo_with_audio.mp4")
+        except:
+            status.append("7")
         print("=========3==========")
         # print(f"Number of Clips: {self.num_clips}")
         print(f"Captions: {self.captions}")
         print(f"Timestamp: {timestamp}")
         print("Data processed!")
-
-        if self.captions == True:
-            DynamicSubtitles(self.tmp_folder+"/StitchedVideo_with_audio.mp4",self.tmp_folder)
-
-        status="compleated"
+        try:
+            if self.captions == True:
+                DynamicSubtitles(self.tmp_folder+"/StitchedVideo_with_audio.mp4",self.tmp_folder)
+        except:
+                status.append("8")
         return status
 
 

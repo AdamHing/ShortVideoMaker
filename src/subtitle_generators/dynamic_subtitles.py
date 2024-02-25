@@ -50,7 +50,7 @@ def DynamicSubtitles(videofilename, tmp_folder):
       subtitles = []
       line = []
       line_duration = 0
-      line_chars = 0
+     
 
       for idx,word_data in enumerate(data):
           word = word_data["word"]
@@ -80,8 +80,6 @@ def DynamicSubtitles(videofilename, tmp_folder):
                   subtitles.append(subtitle_line)
                   line = []
                   line_duration = 0
-                  line_chars = 0
-
       if line:
           subtitle_line = {
               "word": " ".join(item["word"] for item in line),

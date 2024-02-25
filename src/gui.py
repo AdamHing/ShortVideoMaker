@@ -5,8 +5,6 @@ from moviepy.editor import *
 import os
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
-import boto3
-import uuid
 #https://www.youtube.com/watch?v=x0beKqQW3Io
 #MCVido and peripheral video are used interchangeably 
 

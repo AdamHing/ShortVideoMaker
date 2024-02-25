@@ -7,8 +7,9 @@ make a link to download the video
 also containerize 
 
 
-use ml to get matching word deviation
-and correct misinterpreted words 
+use ml to get matching word deviation between the 
+and correct missinterpreted words 
+
 
 eg.
 "guns for hire"
@@ -17,3 +18,8 @@ eg.
 
 
 to save space we can over write the og peripheral.mp4 with the stichedvideo.mp4
+
+
+
+
+https://0hbo7j8ysj.execute-api.us-east-2.amazonaws.com/dev/clippr?main_link=maintestlink&peripheral_link=peripheralTest&captions=False&manual_timestamp=500
