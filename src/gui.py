@@ -5,15 +5,13 @@ from moviepy.editor import *
 import os
 from VideoClips import Clipper,Stitcher
 from subtitle_generators.dynamic_subtitles import DynamicSubtitles
-import boto3
-import uuid
 #https://www.youtube.com/watch?v=x0beKqQW3Io
 #MCVido and peripheral video are used interchangeably 
 
 cwd = os.getcwd()
 print(cwd)
 
-tmp_folder = os.path.abspath(os.path.join(cwd, os.pardir))+ "/tmp"
+tmp_folder = "tmp"
 
 MYVIDEO = tmp_folder+"/ClippedVideo.mp4" #top video
 PERIPHERAL_VIDEO = tmp_folder+"/MCV.mp4" #botton video
@@ -43,9 +41,9 @@ def process_data():
     print(f"Link 2: {link2}")
     #https://www.youtube.com/watch?v=J3-m7dAL_cY #red dead
     # https://www.youtube.com/watch?v=a60UewomiCg
-    #vid https://www.youtube.com/watch?v=Y5RQgchauHs
     # https://www.youtube.com/watch?v=S94ETUiMZwQ
     # https://www.youtube.com/watch?v=9RhWXPcKBI8
+    #https://www.youtube.com/watch?v=cJAa033jhsE
     #YouTube(link1).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/YTV.mp4')
     #MC https://www.youtube.com/watch?v=ZkHKGWKq9mY
     #https://www.youtube.com/watch?v=Ujvy-DEA-UM
@@ -57,6 +55,8 @@ def process_data():
     elif "www.youtube.com" in link1:
         timestamp = clipper.get_most_rewatched_timestamp()
         print("Highest point at {}s:".format(timestamp))
+    else:
+        print("You must use a youtube link")
         
     clipper.download(minus_timestamp, timestamp,plus_timestamp)
 
@@ -80,7 +80,8 @@ def process_data():
     print("=========1==========")
     stitcher.Crop_stitch()
     print("=========2==========")
-    stitcher.Audio_watermark(stitched_video_no_audio_path,watermarkPath,stitched_video_with_audio_path)
+    #stitcher.Audio_watermark(stitched_video_no_audio_path,watermarkPath,stitched_video_with_audio_path)
+    stitcher.Audio_watermark(stitched_video_no_audio_path,stitched_video_with_audio_path)
     print("=========3==========")
     print(f"Number of Clips: {num_clips}")
     print(f"Captions: {captions}")
@@ -97,25 +98,6 @@ def process_data():
         print("doing captions")
         DynamicSubtitles(stitched_video_with_audio_path,tmp_folder)
     
-    
-    s3out = boto3.client('s3',region_name='us-east-2')
-    BUCKET = "clipperbucket"
-    if captions == True:
-        #path to the local output video
-        path =tmp_folder + "/output.mp4"
-    else:
-        path =tmp_folder + "/StitchedVideo_with_audio.mp4"
-
-        #generate file name
-        OBJECT = uuid.uuid4()+ ".mp4"
-    #upload video to s3 file. 
-    s3out.upload_file(Filename=path,Bucket=BUCKET, Key=OBJECT)
-    #generate presigned url
-    url = s3out.generate_presigned_url(
-                                    'get_object',
-                                    Params={"Bucket": BUCKET,"key": OBJECT},
-                                    ExpiresIn=400
-                                    )
 # Create the main window
 root = tk.Tk()
 root.title("Clippr")

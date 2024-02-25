@@ -116,11 +116,23 @@
 FROM public.ecr.aws/lambda/python:3.10
 COPY src/* ${LAMBDA_TASK_ROOT}
 # Install system dependencies
-RUN yum -y update && yum -y install python-pip
+# RUN yum -y update && yum -y install python-pip
 
 #Install Python dependencies
-RUN pip install -r requirements.txt \
-    && rm -rf /var/lib/apt/lists/*
+# RUN yum -y update\
+#     && yum -y install python-pip\
+#     && pip install --no-cache-dir -r requirements.txt \
+#     && rm -rf /var/lib/apt/lists/*
+
+
+
+RUN yum -y update\
+    && yum -y install python-pip\
+    && pip install --no-cache-dir -r requirements.txt
 
 # Entry point
 CMD ["lambda_function.lambda_handler"]
+
+
+
+

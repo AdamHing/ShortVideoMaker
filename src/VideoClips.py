@@ -8,7 +8,7 @@ from yt_dlp.utils import download_range_func
 from pytube import YouTube
 import os
 
-tmp_folder = "/tmp"
+
  
 #get url
 #use url to get heatmap
@@ -18,6 +18,7 @@ tmp_folder = "/tmp"
 class Clipper():
     def __init__(self, main_vid_url):
         self.main_vid_url = main_vid_url
+        self.tmp_folder = "tmp"
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
 
     def get_most_rewatched_timestamp(self):
@@ -62,7 +63,7 @@ class Clipper():
             'verbose': True,
             'download_ranges': download_range_func(None, [(start_time, end_time)]),
             'force_keyframes_at_cuts': True,
-            'outtmpl': os.path.join(tmp_folder+"/ClippedVideo.mp4"), #destination of downloded video
+            'outtmpl': os.path.join(self.tmp_folder+"/ClippedVideo.mp4"), #destination of downloded video
         }
         
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
@@ -83,7 +84,7 @@ class Stitcher:
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
-        self.result = cv2.VideoWriter(tmp_folder+"/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
+        self.result = cv2.VideoWriter(self.tmp_folder+"/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
 
     #depricated 
     #used to clip full length mp4 videos
@@ -128,18 +129,22 @@ class Stitcher:
         video_clip = VideoFileClip(StitchedVideoNoAudio)
         #add watermark 
 
-        files = os.listdir(directory)
         # Filter the list to only include image files
-        image_files = [file for file in files if file.endswith(('.jpg', '.jpeg', '.png',))]
+        try:
+            files = os.listdir("/tmp")
 
-
-        logo = (ImageClip("temp/watermark.png")
+            #make it actualy detect if the array is empty
+            image_files = [file for file in files if file.endswith(('.jpg', '.jpeg', '.png'))][0]
+            logo = (ImageClip("/tmp/"+str(image_files))
                 .set_duration(video_clip.duration)
                 .resize(height=50) # if you need to resize...
                 .margin(right=8, top=8, opacity=0) # (optional) logo-border padding
                 .set_pos(("right","top")))
-        video_clip = CompositeVideoClip([video_clip,logo])
+            video_clip = CompositeVideoClip([video_clip,logo])
+        except:
+            print("no watermark found")
 
+    
         audio_clip = AudioFileClip(self.main_video)
         final_clip = video_clip.set_audio(audio_clip)
         final_clip.write_videofile(StitchedVideo_W_audio_PATH)
