@@ -7,9 +7,8 @@ from yt_dlp.utils import download_range_func
 #from bs4 import BeautifulSoup
 from pytube import YouTube
 import os
+# import ffmpeg
 
-
- 
 #get url
 #use url to get heatmap
 #get length of video
@@ -18,14 +17,14 @@ import os
 class Clipper():
     def __init__(self, main_vid_url):
         self.main_vid_url = main_vid_url
-        self.tmp_folder = "tmp"
+        self.tmp_folder = "/tmp"
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
 
     def get_most_rewatched_timestamp(self):
         with yt_dlp.YoutubeDL() as ydl: 
-            info_dict = ydl.extract_info(self.main_vid_url , download=False)
+            info_dict = ydl.extract_info(self.main_vid_url, download=False)
             heat = info_dict.get('heatmap')
-        vid_duration = YouTube(self.main_vid_url ).length
+        vid_duration = YouTube(self.main_vid_url).length
         x_points = []
         y_points = []
         for idx,i in enumerate(heat):
@@ -49,23 +48,16 @@ class Clipper():
     def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = timestamp-minus_timestamp
         end_time = timestamp+plus_timestamp
-
-        # if timestamp:
-        #     start_time = timestamp-minus_timestamp
-        #     end_time = timestamp+plus_timestamp
-        # else:
-        #     start_time = minus_timestamp
-        #     end_time = plus_timestamp
  
         yt_opts = {
             #"format": "mp4[height=720]",
-            "format": "best",
+            # "format": "best",
+            'format': "mp4",
             'verbose': True,
             'download_ranges': download_range_func(None, [(start_time, end_time)]),
-            'force_keyframes_at_cuts': True,
-            'outtmpl': os.path.join(self.tmp_folder+"/ClippedVideo.mp4"), #destination of downloded video
+            # 'force_keyframes_at_cuts': True,
+            'outtmpl': self.tmp_folder+"/ClippedVideo"# make it work with webd or auto install it as mp4 with yt_dlp
         }
-        
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
             ydl.download(self.main_vid_url)
 
@@ -81,10 +73,11 @@ class Stitcher:
     def __init__(self,main_video,fun_video):
         self.main_video = main_video
         self.fun_video = fun_video
+        self.tmp_folder = "/tmp"
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
-        self.result = cv2.VideoWriter(self.tmp_folder+"/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
+        self.result = cv2.VideoWriter(self.tmp_folder+"/StitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
 
     #depricated 
     #used to clip full length mp4 videos
@@ -114,8 +107,8 @@ class Stitcher:
                 # cv2.imshow('Frame', frame_out) 
                 self.result.write(frame_out)
             # Press Q on keyboard to exit 
-                if cv2.waitKey(25) & 0xFF == ord('q'): 
-                    break
+                # if cv2.waitKey(25) & 0xFF == ord('q'): 
+                #     break
         # Break the loop 
             else: 
                 break
@@ -123,7 +116,7 @@ class Stitcher:
         # the video capture object 
         self.result.release()
         cap.release() 
-        cv2.destroyAllWindows()
+        #cv2.destroyAllWindows()
 
     def Audio_watermark(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
         video_clip = VideoFileClip(StitchedVideoNoAudio)
