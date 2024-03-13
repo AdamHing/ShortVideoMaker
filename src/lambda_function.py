@@ -6,6 +6,7 @@ import os
 
 def lambda_handler(event, context):
     #1. Parse out query string params
+    print(event)
     main_link = event['queryStringParameters']['main_link']
     peripheral_link = event['queryStringParameters']['peripheral_link']
     # watermark_path = event['queryStringParameters']['watermark_path']
@@ -20,8 +21,9 @@ def lambda_handler(event, context):
     LAMBDA_TASK_ROOT = os.environ['LAMBDA_TASK_ROOT']
     AWS_REGION = os.environ['AWS_REGION']
     OBJECT = str(uuid.uuid4())+".mp4"
-    #https://0hbo7j8ysj.execute-api.us-east-2.amazonaws.com/dev/clippr?main_link=https://www.youtube.com/watch?v=UQwdai4rQ-o&peripheral_link=https://www.youtube.com/watch?v=Ujvy-DEA-UM&captions=False&manual_timestamp=500
-    
+    #https://0hbo7j8ysj.execute-api.us-east-2.amazonaws.com/dev/clippr?main_link=https://www.youtube.com/watch?v=UQwdai4rQ-o&peripheral_link=youtube.com/watch?v=QECEC7MLM00&captions=False&manual_timestamp=500
+    #https://7fytkcp2pk2gktqkng2xt5s7my0enknm.lambda-url.us-east-2.on.aws/?main_link=https://www.youtube.com/watch?v=UQwdai4rQ-o&peripheral_link=youtube.com/watch?v=QECEC7MLM00&captions=False&manual_timestamp=500
+    #https://7fytkcp2pk2gktqkng2xt5s7my0enknm.lambda-url.us-east-2.on.aws/?main_link=https://www.youtube.com/watch?v=UQwdai4rQ-o&peripheral_link=youtube.com/watch?v=QECEC7MLM00&captions=False&manual_timestamp=500
     s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY_ID, 
                                     aws_secret_access_key=SECRET_ACCESS_KEY, 
                                     region_name=AWS_REGION)

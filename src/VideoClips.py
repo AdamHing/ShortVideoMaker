@@ -7,6 +7,7 @@ from yt_dlp.utils import download_range_func
 #from bs4 import BeautifulSoup
 from pytube import YouTube
 import os
+import subprocess
 # import ffmpeg
 
 #get url
@@ -18,13 +19,13 @@ class Clipper():
     def __init__(self, main_vid_url):
         self.main_vid_url = main_vid_url
         self.tmp_folder = "/tmp"
+        self.vid_duration = YouTube(self.main_vid_url).length
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
 
     def get_most_rewatched_timestamp(self):
         with yt_dlp.YoutubeDL() as ydl: 
             info_dict = ydl.extract_info(self.main_vid_url, download=False)
             heat = info_dict.get('heatmap')
-        vid_duration = YouTube(self.main_vid_url).length
         x_points = []
         y_points = []
         for idx,i in enumerate(heat):
@@ -33,7 +34,7 @@ class Clipper():
             y_points.append(heat_values)
             x_points.append(idx)
         g = np.argmax(y_points)
-        x = (vid_duration/100)*g
+        x = (self.vid_duration/100)*g
         left = []
         right = []
         for i in range(10):
@@ -46,20 +47,27 @@ class Clipper():
         return x + x_bias
 
     def download(self,minus_timestamp,timestamp, plus_timestamp):
-        start_time = timestamp-minus_timestamp
-        end_time = timestamp+plus_timestamp
+        start_time = round(timestamp-minus_timestamp)
+        end_time = round(timestamp+plus_timestamp)
+        if end_time > self.vid_duration:
+            end_time = self.vid_duration
  
         yt_opts = {
             #"format": "mp4[height=720]",
             # "format": "best",
-            'format': "mp4",
+            #'format': "mp4",
             'verbose': True,
             'download_ranges': download_range_func(None, [(start_time, end_time)]),
-            # 'force_keyframes_at_cuts': True,
-            'outtmpl': self.tmp_folder+"/ClippedVideo"# make it work with webd or auto install it as mp4 with yt_dlp
+            'force_keyframes_at_cuts': True,
+            'outtmpl': self.tmp_folder+"/ClippedVideo"
+            # make it work with webd or auto install it as mp4 with yt_dlp
         }
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
             ydl.download(self.main_vid_url)
+
+        # command = f'yt-dlp {self.main_vid_url} --downloader ffmpeg --downloader-args "ffmpeg_i:-ss {round(start_time)} -to {round(end_time)}"'
+        # print(command)
+        # subprocess.run(command, shell=True)
 
     #not required
     def seconds_to_hms(seconds): 
@@ -85,7 +93,8 @@ class Stitcher:
         timestamp-minus_timestamp,timestamp+plus_timestamp
         video = VideoFileClip(self.main_video).subclip(timestamp-minus_timestamp,timestamp+plus_timestamp)
         video.write_videofile(self.main_video,fps=self.fps) # Many options...
-
+    
+    #outputs stitched video no audio
     def Crop_stitch(self):
         cap = cv2.VideoCapture(self.fun_video) #BOTTOM VIDEO
         cap2 = cv2.VideoCapture(self.main_video) #TOP VIDEO
@@ -97,8 +106,6 @@ class Stitcher:
             ret, frame = cap.read()
             ret2,frame2 = cap2.read()
             if ret2 == True: 
-                #print(frame.shape)#(1080, 1920, 3)
-                #print(frame2.shape)#(720, 1280, 3)
                 frame2 = cv2.resize(frame2,(360,384), interpolation = cv2.INTER_LINEAR)
                 #frame = frame[200:880, 0:1920]
                 frame = cv2.resize(frame,(360,256), interpolation = cv2.INTER_LINEAR)
@@ -118,9 +125,8 @@ class Stitcher:
         cap.release() 
         #cv2.destroyAllWindows()
 
-    def Audio_watermark(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
+    def Audio_watermark_old(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
         video_clip = VideoFileClip(StitchedVideoNoAudio)
-        #add watermark 
 
         # Filter the list to only include image files
         try:
@@ -133,11 +139,40 @@ class Stitcher:
                 .resize(height=50) # if you need to resize...
                 .margin(right=8, top=8, opacity=0) # (optional) logo-border padding
                 .set_pos(("right","top")))
+            print("test0 movipy")
             video_clip = CompositeVideoClip([video_clip,logo])
         except:
             print("no watermark found")
 
-    
+        print("test1 movipy")
         audio_clip = AudioFileClip(self.main_video)
+        print("test2 movipy")
         final_clip = video_clip.set_audio(audio_clip)
+        print("test3 movipy")
+        print(StitchedVideo_W_audio_PATH)
         final_clip.write_videofile(StitchedVideo_W_audio_PATH)
+
+
+
+    def Audio_watermark(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
+        print(StitchedVideoNoAudio)
+        print(os.listdir(self.tmp_folder))
+        # video_clip = cv2.VideoCapture(StitchedVideoNoAudio) later for when we add watermark
+        
+        print("test0")
+        path_to_main_audio_clip = "/tmp/main_audio_clip.mp3"
+        #video to audio
+        subprocess.run(f'ffmpeg -i {self.main_video} {path_to_main_audio_clip}',shell=True)
+        print("test1")
+        print(os.listdir(self.tmp_folder))
+
+        cmd = f'ffmpeg -y -i {path_to_main_audio_clip} -r 30 -i {StitchedVideoNoAudio} -filter:a aresample=async=1 -c:a flac -c:v copy {StitchedVideo_W_audio_PATH}'
+        subprocess.call(cmd, shell=True)
+        print("test2")
+        print(os.listdir(self.tmp_folder))
+        # StitchedVideo_with_audio.mp4
+        # StitchedVideo_with_audio.mp4
+        # StitchedVideo_no_audio.mp4
+        # StitchedVideo_no_audio.mp4
+
+

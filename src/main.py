@@ -5,6 +5,7 @@ import os
 from VideoClips import Clipper,Stitcher
 from dynamic_subtitles import DynamicSubtitles
 import subprocess
+import glob
 class main:
     def __init__(self,main_link,peripheral_link,captions,manual_timestamp=False):
         self.main_link = main_link
@@ -76,12 +77,12 @@ class main:
             timestamp = int(self.manual_timestamp)
         elif "www.youtube.com" in self.main_link:
             timestamp = clipper.get_most_rewatched_timestamp()
-            print("Highest point at {}s:".format(timestamp))
+            print("Highest point at {}s".format(timestamp))
         else:
             return "could not get timestamp"
 
         clipper.download(self.minus_timestamp, timestamp,self.plus_timestamp)
-
+        print(os.listdir(self.tmp_folder))
         status.append("3")
 
         # if "www.youtube.com" in link1:
@@ -99,8 +100,15 @@ class main:
         else:
             print("MC_video already exists, using that one")
 
-        command = f"ffmpeg -fflags +genpts -i {self.tmp_folder}/ClippedVideo.webm -r 24 {self.tmp_folder}/ClippedVideo.mp4"
+        print(os.listdir(self.tmp_folder))
+        # path_to_webm = glob.glob(self.tmp_folder+'/ClippedVideo.*')[0]
+        command = f"ffmpeg -fflags +genpts -i {glob.glob(self.tmp_folder+'/ClippedVideo.*')[0]} -r 24 {self.tmp_folder}/ClippedVideo.mp4"
         subprocess.run(command, shell=True)
+        # print(path_to_webm)
+        # clip = VideoFileClip(path_to_webm)
+        # print(os.listdir(self.tmp_folder))
+        # clip.write_videofile("ClippedVideo.mp4")
+        print(os.listdir(self.tmp_folder))
 
         status.append("4")
         stitcher = Stitcher(self.tmp_folder+"/ClippedVideo.mp4",peripheral_video)
@@ -110,6 +118,7 @@ class main:
         print(os.listdir(self.tmp_folder))
         stitcher.Crop_stitch()
         status.append("6")
+        print(os.listdir(self.tmp_folder))
         print("=========2==========")
         stitcher.Audio_watermark(self.tmp_folder+"/StitchedVideo_no_audio.mp4",self.tmp_folder+"/StitchedVideo_with_audio.mp4")
         status.append("7")
@@ -117,6 +126,7 @@ class main:
         # print(f"Number of Clips: {self.num_clips}")
         print(f"Captions: {self.captions}")
         print(f"Timestamp: {timestamp}")
+        print(os.listdir(self.tmp_folder))
         print("Data processed!")
         try:
             if self.captions == True:
