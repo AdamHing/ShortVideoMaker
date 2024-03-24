@@ -4,100 +4,7 @@ import whisper
 from moviepy.editor import *
 from cv2 import VideoCapture, CAP_PROP_FPS
 # videofilename = "StitchedVideo_W_audio.mp4"
-
-def DynamicSubtitles(videofilename, tmp_folder):
-  print(videofilename)
-  audiofilename = videofilename.replace(".mp4",'.mp3')
-  # Create the ffmpeg input stream
-  input_stream = ffmpeg.input(videofilename)
-  # Extract the audio stream from the input stream
-  audio = input_stream.audio
-  # Save the audio stream as an MP3 file
-  output_stream = ffmpeg.output(audio, audiofilename)
-  # Overwrite output file if it already exists
-  output_stream = ffmpeg.overwrite_output(output_stream)
-  ffmpeg.run(output_stream)
-  #might take some time (approx 3- 5min depending on audio length)
-  model = whisper.load_model("small.en")
-  result = model.transcribe(audiofilename,word_timestamps=True)
-  print(result)
-  # each subtitle segment
-  for each in result['segments']:
-    print (each)
-
-  wordlevel_info = []
-
-  for each in result['segments']:
-    words = each['words']
-    for word in words:
-      # print (word['word'], "  ",word['start']," - ",word['end'])
-      wordlevel_info.append({'word':word['word'].strip(),'start':word['start'],'end':word['end']})
-
-  print(wordlevel_info)
-
-  with open(tmp_folder+'/data.json', 'w') as f:
-      json.dump(wordlevel_info, f,indent=4)
-  with open(tmp_folder+'/data.json', 'r') as f:
-      wordlevel_info_modified = json.load(f)
-  print(wordlevel_info_modified) 
-
-  def split_text_into_lines(data):
-      MaxChars = 80 
-      #maxduration in seconds
-      MaxDuration = 2.0
-      #Split if nothing is spoken (gap) for these many seconds
-      MaxGap = .5
-      subtitles = []
-      line = []
-      line_duration = 0
-     
-
-      for idx,word_data in enumerate(data):
-          word = word_data["word"]
-          start = word_data["start"]
-          end = word_data["end"]
-          line.append(word_data)
-          line_duration += end - start
-          temp = " ".join(item["word"] for item in line)
-          # Check if adding a new word exceeds the maximum character count or duration
-          new_line_chars = len(temp)
-          duration_exceeded = line_duration > MaxDuration 
-          chars_exceeded = new_line_chars > MaxChars 
-          if idx>0:
-            gap = word_data['start'] - data[idx-1]['end'] 
-            # print (word,start,end,gap)
-            maxgap_exceeded = gap > MaxGap
-          else:
-            maxgap_exceeded = False
-          if duration_exceeded or chars_exceeded or maxgap_exceeded:
-              if line:
-                  subtitle_line = {
-                      "word": " ".join(item["word"] for item in line),
-                      "start": line[0]["start"],
-                      "end": line[-1]["end"],
-                      "textcontents": line
-                  }
-                  subtitles.append(subtitle_line)
-                  line = []
-                  line_duration = 0
-      if line:
-          subtitle_line = {
-              "word": " ".join(item["word"] for item in line),
-              "start": line[0]["start"],
-              "end": line[-1]["end"],
-              "textcontents": line
-          }
-          subtitles.append(subtitle_line)
-      return subtitles
-
-  linelevel_subtitles = split_text_into_lines(wordlevel_info_modified)
-  print(linelevel_subtitles)
-
-  for line in linelevel_subtitles:
-    json_str = json.dumps(line, indent=4)
-    print(json_str)
-
-  def create_caption(textJSON, framesize,font = "Rubik-Scribble",fontsize=15, color='white', bgcolor='green'):
+def create_caption(textJSON, framesize,font = "Rubik-Scribble",fontsize=15, color='white', bgcolor='green'):
       wordcount = len(textJSON['textcontents'])
       full_duration = textJSON['end']-textJSON['start']
       word_clips = []
@@ -163,6 +70,105 @@ def DynamicSubtitles(videofilename, tmp_folder):
         word_clip_highlight = word_clip_highlight.set_position((highlight_word['x_pos'], highlight_word['y_pos']))
         word_clips.append(word_clip_highlight)
       return word_clips
+
+
+
+def split_text_into_lines(data):
+      MaxChars = 80 
+      #maxduration in seconds
+      MaxDuration = 2.0
+      #Split if nothing is spoken (gap) for these many seconds
+      MaxGap = .5
+      subtitles = []
+      line = []
+      line_duration = 0
+     
+
+      for idx,word_data in enumerate(data):
+          word = word_data["word"]
+          start = word_data["start"]
+          end = word_data["end"]
+          line.append(word_data)
+          line_duration += end - start
+          temp = " ".join(item["word"] for item in line)
+          # Check if adding a new word exceeds the maximum character count or duration
+          new_line_chars = len(temp)
+          duration_exceeded = line_duration > MaxDuration 
+          chars_exceeded = new_line_chars > MaxChars 
+          if idx>0:
+            gap = word_data['start'] - data[idx-1]['end'] 
+            # print (word,start,end,gap)
+            maxgap_exceeded = gap > MaxGap
+          else:
+            maxgap_exceeded = False
+          if duration_exceeded or chars_exceeded or maxgap_exceeded:
+              if line:
+                  subtitle_line = {
+                      "word": " ".join(item["word"] for item in line),
+                      "start": line[0]["start"],
+                      "end": line[-1]["end"],
+                      "textcontents": line
+                  }
+                  subtitles.append(subtitle_line)
+                  line = []
+                  line_duration = 0
+      if line:
+          subtitle_line = {
+              "word": " ".join(item["word"] for item in line),
+              "start": line[0]["start"],
+              "end": line[-1]["end"],
+              "textcontents": line
+          }
+          subtitles.append(subtitle_line)
+      return subtitles
+
+
+
+def DynamicSubtitles(videofilename, tmp_folder):
+  print(videofilename)
+  
+  audiofilename = videofilename.replace(".mp4",'.mp3')
+  # Create the ffmpeg input stream
+  input_stream = ffmpeg.input(videofilename)
+  # Extract the audio stream from the input stream
+  audio = input_stream.audio
+  # Save the audio stream as an MP3 file
+  output_stream = ffmpeg.output(audio, audiofilename)
+  # Overwrite output file if it already exists
+  output_stream = ffmpeg.overwrite_output(output_stream)
+  ffmpeg.run(output_stream)
+  #might take some time (approx 3- 5min depending on audio length)
+  model = whisper.load_model("medium.en")
+  result = model.transcribe(audiofilename,word_timestamps=True)
+  print(result)
+  # each subtitle segment
+  wordlevel_info = []
+
+  for each in result['segments']:
+    words = each['words']
+    print(words)
+    for word in words:
+      # print (word['word'], "  ",word['start']," - ",word['end'])
+      wordlevel_info.append({'word':word['word'].strip(),'start':word['start'],'end':word['end']})
+
+  print(wordlevel_info)
+
+  with open(tmp_folder+'/data.json', 'w') as f:
+      json.dump(wordlevel_info, f,indent=4)
+  with open(tmp_folder+'/data.json', 'r') as f:
+      wordlevel_info_modified = json.load(f)
+  print(wordlevel_info_modified) 
+
+  
+
+  linelevel_subtitles = split_text_into_lines(wordlevel_info_modified)
+  print(linelevel_subtitles)
+
+  for line in linelevel_subtitles:
+    json_str = json.dumps(line, indent=4)
+    print(json_str)
+
+  
 
   # frame_size = (1080,1080)
   frame_size = (360,640)

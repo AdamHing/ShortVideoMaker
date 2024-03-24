@@ -113,22 +113,57 @@
 # CMD ["lambda_function.lambda_handler"]
 #===============================
 
-FROM public.ecr.aws/lambda/python:3.10
-COPY src/* ${LAMBDA_TASK_ROOT}
-# Install system dependencies
-# RUN yum -y update && yum -y install python-pip
 
-#Install Python dependencies
-# RUN yum -y update\
-#     && yum -y install python-pip\
+
+# #Install Python dependencies
+# RUN yum -y update \
+#     && yum -y install python-pip \
+#     && yum clean all \
+#     && pip install --no-cache-dir -r requirements.txt \
+#     && rm -rf /var/lib/apt/lists/*
+
+# RUN yum -y update \
+#     && yum -y install wget \
+#     && yum -y install xz \
+#     && yum install -y tar.x86_64 \
+#     && wget -O ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-amd64-static.tar.xz \
+#     && tar xvf ffmpeg.tar.xz \
+#     && yum -y install python-pip \
+#     && yum clean all \
 #     && pip install --no-cache-dir -r requirements.txt \
 #     && rm -rf /var/lib/apt/lists/*
 
 
+# RUN yum -y update \
+#     && yum -y install python-pip \
+#     && yum clean all \
+#     && pip install --no-cache-dir -r requirements.txt \
+#     && rm -rf /var/lib/apt/lists/*
 
-RUN yum -y update\
-    && yum -y install python-pip\
-    && pip install --no-cache-dir -r requirements.txt
+# RUN yum -y update\
+#     && yum -y install python-pip\
+#     && pip install --no-cache-dir -r requirements.txt
+
+
+
+
+# FROM public.ecr.aws/lambda/python:3.10
+# COPY src/* ${LAMBDA_TASK_ROOT}
+# COPY ffmpeg-6.1-amd64-static /usr/local/bin/ffmpeg
+# RUN chmod 777 -R /usr/local/bin/ffmpeg
+
+FROM public.ecr.aws/lambda/python:3.10
+COPY src/* ${LAMBDA_TASK_ROOT}
+
+#Install Python dependencies
+RUN yum -y update \
+    && yum -y install tar xz \
+    && yum -y install python-pip \
+    && yum clean all 
+RUN curl https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz > /tmp/ffmpeg-release.tar.xz && tar xvf /tmp/ffmpeg-release.tar.xz -C /opt && mv /opt/ffmpeg-* /opt/ffmpeg && cd /opt/ffmpeg && mv model /usr/local/share && mv ffmpeg ffprobe qt-faststart /usr/local/bin && rm /tmp/ffmpeg-release.tar.xz
+RUN pip install --no-cache-dir -r requirements.txt \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # Entry point
 CMD ["lambda_function.lambda_handler"]
