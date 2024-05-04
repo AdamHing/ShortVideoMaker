@@ -3,6 +3,7 @@ import json
 import whisper
 from moviepy.editor import *
 from cv2 import VideoCapture, CAP_PROP_FPS
+# i love cats
 # videofilename = "StitchedVideo_W_audio.mp4"
 def create_caption(textJSON, framesize,font = "Rubik-Scribble",fontsize=15, color='white', bgcolor='green'):
       wordcount = len(textJSON['textcontents'])
