@@ -6,3 +6,53 @@ make a link to download the video
 
 also containerize 
 
+
+use ml to get matching word deviation between the 
+and correct missinterpreted words 
+
+
+eg.
+"guns for hire"
+"guns for wire"
+
+
+
+to save space we can over write the og peripheral.mp4 with the stichedvideo.mp4
+
+
+
+
+https://0hbo7j8ysj.execute-api.us-east-2.amazonaws.com/dev/clippr?main_link=maintestlink&peripheral_link=peripheralTest&captions=False&manual_timestamp=500
+
+
+
+
+front-end to do:
+-set up google accounts/custom DB
+-set up stripe for payments
+-see about ads
+-link api to domain name
+-get certificate for domain
+-upgrade front end:
+    -input filter
+    -framework that supports commponents
+    -make it look more pretty
+    -keep code clean and maintainable
+    -Dedicated pages:
+        -Login/register
+        -VideoMaker Form
+        -aboutus
+-Backend:
+    -reduce lambda uptime
+    -support chaptered videos
+    -input filter
+
+-general features: 
+    -multiple clips per video
+    -simple web based video editing gui
+
+
+
+Long Term Support:
+    -outsource mainanance
+    -move some features local

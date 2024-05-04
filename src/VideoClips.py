@@ -1,27 +1,31 @@
 import numpy as np
 import cv2
 from moviepy.editor import *
-import numpy as np
 import yt_dlp
 from yt_dlp.utils import download_range_func
 #from bs4 import BeautifulSoup
-from pytube import YouTube
- 
+import os
+import subprocess
+from numba import jit
+
+# import ffmpeg
+
 #get url
 #use url to get heatmap
 #get length of video
 #use that script to get timestamp
 # return status of everyfunction as it runs
 class Clipper():
-    def __init__(self, main_vid_url):
+    def __init__(self, main_vid_url,vid_duration):
         self.main_vid_url = main_vid_url
+        self.tmp_folder = "/tmp"
+        self.vid_duration = vid_duration 
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
-
+    @jit
     def get_most_rewatched_timestamp(self):
         with yt_dlp.YoutubeDL() as ydl: 
-            info_dict = ydl.extract_info(self.main_vid_url , download=False)
+            info_dict = ydl.extract_info(self.main_vid_url, download=False)
             heat = info_dict.get('heatmap')
-        vid_duration = YouTube(self.main_vid_url ).length
         x_points = []
         y_points = []
         for idx,i in enumerate(heat):
@@ -30,7 +34,7 @@ class Clipper():
             y_points.append(heat_values)
             x_points.append(idx)
         g = np.argmax(y_points)
-        x = (vid_duration/100)*g
+        x = (self.vid_duration/100)*g
         left = []
         right = []
         for i in range(10):
@@ -40,47 +44,48 @@ class Clipper():
             except:
                 print("out of range")
             x_bias = sum(right)-sum(left)
-        return x+ x_bias
+        return x + x_bias
 
     def download(self,minus_timestamp,timestamp, plus_timestamp):
-        start_time = timestamp-minus_timestamp
-        end_time = timestamp+plus_timestamp
-
-        # if timestamp:
-        #     start_time = timestamp-minus_timestamp
-        #     end_time = timestamp+plus_timestamp
-        # else:
-        #     start_time = minus_timestamp
-        #     end_time = plus_timestamp
+        start_time = round(timestamp-minus_timestamp)
+        end_time = round(timestamp+plus_timestamp)
+        if end_time > self.vid_duration:
+            end_time = self.vid_duration
  
         yt_opts = {
             #"format": "mp4[height=720]",
-            "format": "best",
+            # "format": "best",
+            #'format': "mp4",
             'verbose': True,
             'download_ranges': download_range_func(None, [(start_time, end_time)]),
             'force_keyframes_at_cuts': True,
-            'outtmpl': os.path.join("tmp/ClippedVideo.mp4"), #destination of downloded video
+            'outtmpl': self.tmp_folder+"/ClippedVideo"
+            # make it work with webd or auto install it as mp4 with yt_dlp
         }
-        
         with yt_dlp.YoutubeDL(yt_opts) as ydl:
             ydl.download(self.main_vid_url)
 
+        # command = f'yt-dlp {self.main_vid_url} --downloader ffmpeg --downloader-args "ffmpeg_i:-ss {round(start_time)} -to {round(end_time)}"'
+        # print(command)
+        # subprocess.run(command, shell=True)
+
     #not required
-    def seconds_to_hms(seconds): 
-        seconds = seconds[0]
-        print(type(seconds))
-        hours = seconds // 3600
-        minutes = (seconds % 3600) // 60
-        remaining_seconds = seconds % 60
-        return hours, minutes, remaining_seconds
+    # def seconds_to_hms(seconds): 
+    #     seconds = seconds[0]
+    #     print(type(seconds))
+    #     hours = seconds // 3600
+    #     minutes = (seconds % 3600) // 60
+    #     remaining_seconds = seconds % 60
+    #     return hours, minutes, remaining_seconds
 class Stitcher:
     def __init__(self,main_video,fun_video):
         self.main_video = main_video
         self.fun_video = fun_video
+        self.tmp_folder = "/tmp"
         fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         vidcap = cv2.VideoCapture(self.main_video)
         self.fps = vidcap.get(cv2.CAP_PROP_FPS)
-        self.result = cv2.VideoWriter("tmp/stitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
+        self.result = cv2.VideoWriter(self.tmp_folder+"/StitchedVideo_no_audio.mp4", fourcc, self.fps, (360,640))
 
     #depricated 
     #used to clip full length mp4 videos
@@ -88,7 +93,8 @@ class Stitcher:
         timestamp-minus_timestamp,timestamp+plus_timestamp
         video = VideoFileClip(self.main_video).subclip(timestamp-minus_timestamp,timestamp+plus_timestamp)
         video.write_videofile(self.main_video,fps=self.fps) # Many options...
-
+    
+    #outputs stitched video no audio
     def Crop_stitch(self):
         cap = cv2.VideoCapture(self.fun_video) #BOTTOM VIDEO
         cap2 = cv2.VideoCapture(self.main_video) #TOP VIDEO
@@ -100,8 +106,6 @@ class Stitcher:
             ret, frame = cap.read()
             ret2,frame2 = cap2.read()
             if ret2 == True: 
-                #print(frame.shape)#(1080, 1920, 3)
-                #print(frame2.shape)#(720, 1280, 3)
                 frame2 = cv2.resize(frame2,(360,384), interpolation = cv2.INTER_LINEAR)
                 #frame = frame[200:880, 0:1920]
                 frame = cv2.resize(frame,(360,256), interpolation = cv2.INTER_LINEAR)
@@ -110,8 +114,8 @@ class Stitcher:
                 # cv2.imshow('Frame', frame_out) 
                 self.result.write(frame_out)
             # Press Q on keyboard to exit 
-                if cv2.waitKey(25) & 0xFF == ord('q'): 
-                    break
+                # if cv2.waitKey(25) & 0xFF == ord('q'): 
+                #     break
         # Break the loop 
             else: 
                 break
@@ -119,18 +123,55 @@ class Stitcher:
         # the video capture object 
         self.result.release()
         cap.release() 
-        cv2.destroyAllWindows()
+        #cv2.destroyAllWindows()
 
-    def Audio_watermark(self,StitchedVideoNoAudio,watermarkPath,StitchedVideo_W_audio_PATH):
+    def Audio_watermark_old(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
         video_clip = VideoFileClip(StitchedVideoNoAudio)
-        #add watermark 
-        logo = (ImageClip(watermarkPath)
+
+        # Filter the list to only include image files
+        try:
+            files = os.listdir("/tmp")
+            #make it actualy detect if the array is empty
+            image_files = [file for file in files if file.endswith(('.jpg', '.jpeg', '.png'))][0]
+            logo = (ImageClip("/tmp/"+str(image_files))
                 .set_duration(video_clip.duration)
                 .resize(height=50) # if you need to resize...
                 .margin(right=8, top=8, opacity=0) # (optional) logo-border padding
                 .set_pos(("right","top")))
-        video_clip = CompositeVideoClip([video_clip,logo])
+            print("test0 movipy")
+            video_clip = CompositeVideoClip([video_clip,logo])
+        except:
+            print("no watermark found")
 
+        print("test1 movipy")
         audio_clip = AudioFileClip(self.main_video)
+        print("test2 movipy")
         final_clip = video_clip.set_audio(audio_clip)
+        print("test3 movipy")
+        print(StitchedVideo_W_audio_PATH)
         final_clip.write_videofile(StitchedVideo_W_audio_PATH)
+
+
+
+    def Audio_watermark(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
+        print(StitchedVideoNoAudio)
+        print(os.listdir(self.tmp_folder))
+        # video_clip = cv2.VideoCapture(StitchedVideoNoAudio) later for when we add watermark
+        
+        print("test0")
+        path_to_main_audio_clip = "/tmp/main_audio_clip.mp3"
+        #video to audio
+        subprocess.run(f'ffmpeg -i {self.main_video} {path_to_main_audio_clip}',shell=True)
+        print("test1")
+        print(os.listdir(self.tmp_folder))
+
+        cmd = f'ffmpeg -y -i {path_to_main_audio_clip} -r 30 -i {StitchedVideoNoAudio} -filter:a aresample=async=1 -c:a flac -c:v copy {StitchedVideo_W_audio_PATH}'
+        subprocess.call(cmd, shell=True)
+        print("test2")
+        print(os.listdir(self.tmp_folder))
+        # StitchedVideo_with_audio.mp4
+        # StitchedVideo_with_audio.mp4
+        # StitchedVideo_no_audio.mp4
+        # StitchedVideo_no_audio.mp4
+
+

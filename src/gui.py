@@ -1,25 +1,27 @@
 import tkinter as tk
 from tkinter import ttk
-#from BlackSubtitles import VideoTranscriber
 from pytube import YouTube
-#from main import Stitcher
 from moviepy.editor import *
 import os
 from VideoClips import Clipper,Stitcher
-from subtitle_generators.dynamic_subtitles import DynamicSubtitles
-import random
-
+from dynamic_subtitles import DynamicSubtitles
+#https://www.youtube.com/watch?v=x0beKqQW3Io
 #MCVido and peripheral video are used interchangeably 
 
-MYVIDEO = "tmp/ClippedVideo.mp4" #top video
-MCVIDEO = "Source_videos/MCV.mp4" #botton video
-stitched_video_no_audio_path = "tmp/StitchedVideo_no_audio.mp4"
+cwd = os.getcwd()
+print(cwd)
+
+tmp_folder = "tmp"
+
+MYVIDEO = tmp_folder+"/ClippedVideo.mp4" #top video
+PERIPHERAL_VIDEO = tmp_folder+"/MCV.mp4" #botton video
+stitched_video_no_audio_path = tmp_folder+"/StitchedVideo_no_audio.mp4"
 # name and location of stitched video with audio file. 
-stitched_video_with_audio_path = "tmp/StitchedVideo_with_audio.mp4"
-output_video_path = "outputvideos/output.mp4"
-watermarkPath = "img/watermark.png"
+stitched_video_with_audio_path = tmp_folder+"/StitchedVideo_with_audio.mp4"
+watermarkPath = os.path.abspath(os.path.join(cwd, os.pardir))+"/ShortVideoMaker/img/watermark.png"
 minus_timestamp = 15
 plus_timestamp = 30
+
 
 peripheral_video_list = [
     "https://www.youtube.com/watch?v=Ujvy-DEA-UM",
@@ -39,9 +41,9 @@ def process_data():
     print(f"Link 2: {link2}")
     #https://www.youtube.com/watch?v=J3-m7dAL_cY #red dead
     # https://www.youtube.com/watch?v=a60UewomiCg
-    #vid https://www.youtube.com/watch?v=Y5RQgchauHs
     # https://www.youtube.com/watch?v=S94ETUiMZwQ
     # https://www.youtube.com/watch?v=9RhWXPcKBI8
+    #https://www.youtube.com/watch?v=cJAa033jhsE
     #YouTube(link1).streams.filter(progressive=True, file_extension='mp4').first().download(filename='Source_videos/YTV.mp4')
     #MC https://www.youtube.com/watch?v=ZkHKGWKq9mY
     #https://www.youtube.com/watch?v=Ujvy-DEA-UM
@@ -53,6 +55,8 @@ def process_data():
     elif "www.youtube.com" in link1:
         timestamp = clipper.get_most_rewatched_timestamp()
         print("Highest point at {}s:".format(timestamp))
+    else:
+        print("You must use a youtube link")
         
     clipper.download(minus_timestamp, timestamp,plus_timestamp)
 
@@ -63,18 +67,21 @@ def process_data():
     #     print("link not valid, using local video")
     #     MYVIDEO="Source_videos/"+link1+"mp4"
     if link2:
-        YouTube(link2).streams.filter(progressive=True, file_extension='mp4').first().download(filename=MYVIDEO)
-    if not os.path.exists(MYVIDEO):
-        YouTube(random.choice(peripheral_video_list)).streams.filter(progressive=True, file_extension='mp4').first().download(filename=MYVIDEO)
+        YouTube(link2,use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
+        print("downloading peripheral video")
+
+    if not os.path.isfile(PERIPHERAL_VIDEO):
+        YouTube("https://www.youtube.com/watch?v=Ujvy-DEA-UM",use_oauth=False, allow_oauth_cache=True).streams.filter(progressive=True, file_extension='mp4').first().download(filename=PERIPHERAL_VIDEO)
     else:
         print("peripheral video already exists, using that one")
 
-    stitcher = Stitcher(MYVIDEO,MCVIDEO)
+    stitcher = Stitcher(MYVIDEO,PERIPHERAL_VIDEO)
     # stitcher.Clip(30, timestamp,30)
     print("=========1==========")
     stitcher.Crop_stitch()
     print("=========2==========")
-    stitcher.Audio_watermark(stitched_video_no_audio_path,watermarkPath,stitched_video_with_audio_path)
+    #stitcher.Audio_watermark(stitched_video_no_audio_path,watermarkPath,stitched_video_with_audio_path)
+    stitcher.Audio_watermark(stitched_video_no_audio_path,stitched_video_with_audio_path)
     print("=========3==========")
     print(f"Number of Clips: {num_clips}")
     print(f"Captions: {captions}")
@@ -88,12 +95,13 @@ def process_data():
     #     transcriber.transcribe_video()
     #     transcriber.create_video(output_video_path)
     if captions == True:
-        DynamicSubtitles(stitched_video_with_audio_path)
-
+        print("doing captions")
+        DynamicSubtitles(stitched_video_with_audio_path,tmp_folder)
+    
 # Create the main window
 root = tk.Tk()
 root.title("Clippr")
-root.iconbitmap("img/icon.ico")
+#root.iconbitmap("/img/icon.ico")
 # Set the background color to black
 root.configure(bg="#000000")
 # Configure a dark theme
