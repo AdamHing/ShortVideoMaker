@@ -1,13 +1,13 @@
 import numpy as np
 import cv2
 from moviepy.editor import *
-import numpy as np
 import yt_dlp
 from yt_dlp.utils import download_range_func
 #from bs4 import BeautifulSoup
-from pytube import YouTube
 import os
 import subprocess
+from numba import jit
+
 # import ffmpeg
 
 #get url
@@ -16,12 +16,12 @@ import subprocess
 #use that script to get timestamp
 # return status of everyfunction as it runs
 class Clipper():
-    def __init__(self, main_vid_url):
+    def __init__(self, main_vid_url,vid_duration):
         self.main_vid_url = main_vid_url
         self.tmp_folder = "/tmp"
-        self.vid_duration = YouTube(self.main_vid_url).length
+        self.vid_duration = vid_duration 
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
-
+    @jit
     def get_most_rewatched_timestamp(self):
         with yt_dlp.YoutubeDL() as ydl: 
             info_dict = ydl.extract_info(self.main_vid_url, download=False)
@@ -70,13 +70,13 @@ class Clipper():
         # subprocess.run(command, shell=True)
 
     #not required
-    def seconds_to_hms(seconds): 
-        seconds = seconds[0]
-        print(type(seconds))
-        hours = seconds // 3600
-        minutes = (seconds % 3600) // 60
-        remaining_seconds = seconds % 60
-        return hours, minutes, remaining_seconds
+    # def seconds_to_hms(seconds): 
+    #     seconds = seconds[0]
+    #     print(type(seconds))
+    #     hours = seconds // 3600
+    #     minutes = (seconds % 3600) // 60
+    #     remaining_seconds = seconds % 60
+    #     return hours, minutes, remaining_seconds
 class Stitcher:
     def __init__(self,main_video,fun_video):
         self.main_video = main_video
@@ -131,7 +131,6 @@ class Stitcher:
         # Filter the list to only include image files
         try:
             files = os.listdir("/tmp")
-
             #make it actualy detect if the array is empty
             image_files = [file for file in files if file.endswith(('.jpg', '.jpeg', '.png'))][0]
             logo = (ImageClip("/tmp/"+str(image_files))
