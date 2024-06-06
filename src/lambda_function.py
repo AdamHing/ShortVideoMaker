@@ -1,6 +1,7 @@
 import uuid
 import os
 from multiprocessing import Process
+import boto3
 # from numba import jit
 
 # from moviepy.editor import *
@@ -21,7 +22,6 @@ OBJECT = str(uuid.uuid4())+ ".mp4"
 ENDPOINT_URL = os.environ['ENDPOINT_URL']
 URL_EXPIRE = os.environ['URL_EXPIRE']
 
-
 def runInParallel(*fns):
   proc = []
   for fn in fns:
@@ -38,8 +38,10 @@ def lambda_handler( event, context):
     from VideoClips import Clipper,Stitcher
     import subprocess
     import timeit
-    import boto3
+   
     from Websocket import Websocket
+    from pytube import YouTube
+    import glob
     #1. Parse out query string params
     # main_link = event['queryStringParameters']['main_link']
     # peripheral_link = event['queryStringParameters']['peripheral_link']
@@ -62,7 +64,9 @@ def lambda_handler( event, context):
     #message = event["message"]   #message from previous lambda
     #num_clips = event['queryStringParameters']['num_clips']
 
+    
     #https://0hbo7j8ysj.execute-api.us-east-2.amazonaws.com/dev/clippr?main_link=https://www.youtube.com/watch?v=UQwdai4rQ-o&peripheral_link=youtube.com/watch?v=QECEC7MLM00&captions=False&manual_timestamp=500
+    
     #https://2ehfn7i3fywacc5vwtffs4ppxa0tukbp.lambda-url.us-east-2.on.aws/?main_link=https://www.youtube.com/watch?v=UQwdai4rQ-o&peripheral_link=youtube.com/watch?v=QECEC7MLM00&captions=False&manual_timestamp=500
     s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY_ID, 
                                     aws_secret_access_key=SECRET_ACCESS_KEY, 
@@ -75,9 +79,10 @@ def lambda_handler( event, context):
     # mainprocess.process_data()
 #=================================================================================
     # Use link1, link2, num_clips, and captions as needed
+    print("=================new run=========================")
     print(f"Link 1: {main_link}")
     print(f"Link 2: {peripheral_link}")
-    from pytube import YouTube
+ 
     
     vid_duration = YouTube(main_link).length
     clipper = Clipper(main_link, vid_duration=vid_duration)
@@ -97,7 +102,7 @@ def lambda_handler( event, context):
     #download main video
     def download_main_video_func():
         start_time = timeit.default_timer()
-        clipper.download(minus_timestamp, timestamp,plus_timestamp)
+        clipper.download(minus_timestamp, timestamp, plus_timestamp)
         websocket.PostToConnection(message="Downloaded Main video")
         end_time = timeit.default_timer()
         duration = end_time-start_time
@@ -117,10 +122,19 @@ def lambda_handler( event, context):
         duration = end_time-start_time
         print("duration: "+str(duration))
         websocket.PostToConnection(message="Downloaded peripheral video")
-    #download both videos at the same time
-    runInParallel(download_main_video_func(),download_peripheral_video())
     
-    import glob
+    
+    websocket.PostToConnection(message="Downloading main video")
+    print("Downloading main")
+    download_main_video_func()
+    websocket.PostToConnection(message="Downloading peripheral video")
+    print("Downloading peripheral")
+    download_peripheral_video()
+    
+    #download both videos at the same time
+    # runInParallel(download_main_video_func(),download_peripheral_video())
+    
+  
     command = f"ffmpeg -fflags +genpts -i {glob.glob(tmp_folder+'/ClippedVideo.*')[0]} -r 24 {tmp_folder}/ClippedVideo.mp4"
     subprocess.run(command, shell=True)
     websocket.PostToConnection(message="reformated clipped video")

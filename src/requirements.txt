@@ -62,5 +62,6 @@ websockets==12.0
 openai-whisper==20231117
 whisper==1.1.10
 # whisper-openai==1.0.0
-yt-dlp==2023.12.30
-# pycryptodome
+# yt-dlp==2023.12.30
+yt-dlp
+

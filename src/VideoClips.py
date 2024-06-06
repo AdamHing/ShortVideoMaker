@@ -10,6 +10,14 @@ from numba import jit
 
 # import ffmpeg
 
+#tut on how to make ffmpeg lambda layer
+#https://virkud-sarvesh.medium.com/building-ffmpeg-layer-for-a-lambda-function-a206f36d3edc#:~:text=Navigate%20into%20the%20AWS%20Lambda,zip%20that%20we%20copied%20previously.
+#https://stackoverflow.com/questions/74439126/how-to-download-video-by-url-using-ffmpeg-python
+
+# amazon ffmpeg
+#https://stackoverflow.com/questions/73660917/install-ffmpeg-on-amazon-ecr-linux-python
+
+
 #get url
 #use url to get heatmap
 #get length of video
@@ -45,29 +53,32 @@ class Clipper():
                 print("out of range")
             x_bias = sum(right)-sum(left)
         return x + x_bias
-
+    
+    #Download Video 
+    # def download(self,minus_timestamp,timestamp, plus_timestamp):
+    #     start_time = round(timestamp-minus_timestamp)
+    #     end_time = round(timestamp+plus_timestamp)
+    #     if end_time > self.vid_duration:
+    #         end_time = self.vid_duration
+ 
+    #     yt_opts = {
+    #         #"format": "mp4[height=720]",
+    #         # "format": "best",
+    #         #'format': "mp4",
+    #         #'verbose': True,
+    #         'download_ranges': download_range_func(None, [(start_time, end_time)]),
+    #         #'force_keyframes_at_cuts': True,
+    #         'outtmpl': self.tmp_folder+"/ClippedVideo"
+    #         # make it work with webd or auto install it as mp4 with yt_dlp
+    #     }
+    #     with yt_dlp.YoutubeDL(yt_opts) as ydl:
+    #         ydl.download(self.main_vid_url)
+    
     def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = round(timestamp-minus_timestamp)
         end_time = round(timestamp+plus_timestamp)
-        if end_time > self.vid_duration:
-            end_time = self.vid_duration
- 
-        yt_opts = {
-            #"format": "mp4[height=720]",
-            # "format": "best",
-            #'format': "mp4",
-            'verbose': True,
-            'download_ranges': download_range_func(None, [(start_time, end_time)]),
-            'force_keyframes_at_cuts': True,
-            'outtmpl': self.tmp_folder+"/ClippedVideo"
-            # make it work with webd or auto install it as mp4 with yt_dlp
-        }
-        with yt_dlp.YoutubeDL(yt_opts) as ydl:
-            ydl.download(self.main_vid_url)
+        subprocess.run('yt-dlp -f 18 "{0}" --external-downloader ffmpeg --external-downloader-args "ffmpeg_i:-ss {1} -to {2}" -o "%(title)s_Extract_Format18.%(ext)s"'.format(self.main_vid_url,start_time,end_time), shell=True)
 
-        # command = f'yt-dlp {self.main_vid_url} --downloader ffmpeg --downloader-args "ffmpeg_i:-ss {round(start_time)} -to {round(end_time)}"'
-        # print(command)
-        # subprocess.run(command, shell=True)
 
     #not required
     # def seconds_to_hms(seconds): 
