@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 from moviepy.editor import *
 import yt_dlp
-from yt_dlp.utils import download_range_func
 #from bs4 import BeautifulSoup
 import os
 import subprocess
@@ -77,7 +76,7 @@ class Clipper():
     def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = round(timestamp-minus_timestamp)
         end_time = round(timestamp+plus_timestamp)
-        subprocess.run('yt-dlp -f 18 "{0}" --external-downloader ffmpeg --external-downloader-args "ffmpeg_i:-ss {1} -to {2}" -o "%(title)s_Extract_Format18.%(ext)s"'.format(self.main_vid_url,start_time,end_time), shell=True)
+        subprocess.run("bash VideoDownloader.sh {0} {1} {2}".format(self.main_vid_url,start_time,end_time))
 
 
     #not required
