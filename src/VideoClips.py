@@ -76,7 +76,12 @@ class Clipper():
     def download(self,minus_timestamp,timestamp, plus_timestamp):
         start_time = round(timestamp-minus_timestamp)
         end_time = round(timestamp+plus_timestamp)
-        subprocess.run("bash VideoDownloader.sh {0} {1} {2}".format(self.main_vid_url,start_time,end_time))
+        
+        #retun 1 means failed, return 0 means success. 
+        return subprocess.run('yt-dlp "{0}" --download-sections "*{1}-{2}"'.format(self.main_vid_url,start_time,end_time),shell=True)
+        
+        #detect if command returns error -11
+        #if error -11 then tell user that the video will not work. 
 
 
     #not required

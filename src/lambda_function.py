@@ -2,6 +2,8 @@ import uuid
 import os
 from multiprocessing import Process
 import boto3
+import timeit
+from Websocket import Websocket
 # from numba import jit
 
 # from moviepy.editor import *
@@ -33,13 +35,10 @@ def runInParallel(*fns):
 
 #endpoint_url="https://s2zwrp5xhd.execute-api.us-west-2.amazonaws.com/production/"
 # api_client = boto3.client('apigatewaymanagementapi', endpoint_url=ENDPOINT_URL)
-def lambda_handler( event, context):
+def lambda_handler(event, context):
     print(event)
     from VideoClips import Clipper,Stitcher
     import subprocess
-    import timeit
-   
-    from Websocket import Websocket
     from pytube import YouTube
     import glob
     #1. Parse out query string params
@@ -102,8 +101,13 @@ def lambda_handler( event, context):
     #download main video
     def download_main_video_func():
         start_time = timeit.default_timer()
-        clipper.download(minus_timestamp, timestamp, plus_timestamp)
-        websocket.PostToConnection(message="Downloaded Main video")
+        u = clipper.download(minus_timestamp, timestamp, plus_timestamp)
+        if u == 0:
+            websocket.PostToConnection(message="Video download was successful")
+        elif u == 1:
+            websocket.PostToConnection(message="Video download was unsuccessful, choose a different video")
+        else:
+            websocket.PostToConnection(message="Something unexpected occured while downloading")
         end_time = timeit.default_timer()
         duration = end_time-start_time
         print("duration: "+str(duration))
