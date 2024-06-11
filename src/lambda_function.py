@@ -37,7 +37,7 @@ def runInParallel(*fns):
 # api_client = boto3.client('apigatewaymanagementapi', endpoint_url=ENDPOINT_URL)
 def lambda_handler(event, context):
     print(event)
-    from VideoClips import Clipper,Stitcher
+    from VideoClips import Clipper, Stitcher
     import subprocess
     from pytube import YouTube
     import glob
@@ -70,6 +70,7 @@ def lambda_handler(event, context):
     s3_client = boto3.client('s3', aws_access_key_id=ACCESS_KEY_ID, 
                                     aws_secret_access_key=SECRET_ACCESS_KEY, 
                                     region_name=AWS_REGION)
+    
     s3_client.download_file(BUCKET, "WaterMarks/watermark.png", "/tmp/watermark.png")
     websocket.PostToConnection(message="Downloaded watermark")
     # from main import main
@@ -82,8 +83,8 @@ def lambda_handler(event, context):
     print(f"Link 1: {main_link}")
     print(f"Link 2: {peripheral_link}")
  
-    
     vid_duration = YouTube(main_link).length
+    print("vid_duration:",vid_duration)
     clipper = Clipper(main_link, vid_duration=vid_duration)
     
     #get timestamp 
@@ -94,7 +95,8 @@ def lambda_handler(event, context):
         timestamp = clipper.get_most_rewatched_timestamp()
         print("Highest point at {}s".format(timestamp))
     else:
-        return "could not get timestamp"
+        websocket.PostToConnection(message="could not get timestamp")
+        
     websocket.PostToConnection(message="got timestamp")
     print("=========0==========")
 
@@ -102,12 +104,14 @@ def lambda_handler(event, context):
     def download_main_video_func():
         start_time = timeit.default_timer()
         u = clipper.download(minus_timestamp, timestamp, plus_timestamp)
-        if u == 0:
+        print(u)
+        if u == "0":
             websocket.PostToConnection(message="Video download was successful")
-        elif u == 1:
+        elif u == "1":
             websocket.PostToConnection(message="Video download was unsuccessful, choose a different video")
         else:
-            websocket.PostToConnection(message="Something unexpected occured while downloading")
+            websocket.PostToConnection(message=f"Something unexpected occured while downloading")
+            
         end_time = timeit.default_timer()
         duration = end_time-start_time
         print("duration: "+str(duration))
@@ -127,25 +131,18 @@ def lambda_handler(event, context):
         print("duration: "+str(duration))
         websocket.PostToConnection(message="Downloaded peripheral video")
     
-    
-    websocket.PostToConnection(message="Downloading main video")
     print("Downloading main")
     download_main_video_func()
-    websocket.PostToConnection(message="Downloading peripheral video")
     print("Downloading peripheral")
     download_peripheral_video()
     
     #download both videos at the same time
     # runInParallel(download_main_video_func(),download_peripheral_video())
     
-  
-    command = f"ffmpeg -fflags +genpts -i {glob.glob(tmp_folder+'/ClippedVideo.*')[0]} -r 24 {tmp_folder}/ClippedVideo.mp4"
-    subprocess.run(command, shell=True)
+    #save video at 24 fps and as an mp4 
+    subprocess.run(f"ffmpeg -fflags +genpts -i {glob.glob(tmp_folder+'/ClippedVideo.*')[0]} -r 24 {tmp_folder}/ClippedVideo.mp4", shell=True)
     websocket.PostToConnection(message="reformated clipped video")
-    # print(path_to_webm)
-    # clip = VideoFileClip(path_to_webm)
-    # print(os.listdir(self.tmp_folder))
-    # clip.write_videofile("ClippedVideo.mp4")
+   
     stitcher = Stitcher(tmp_folder+"/ClippedVideo.mp4",peripheral_video)
     websocket.PostToConnection(message="Stitcher")
     # stitcher.Clip(30, timestamp,30)
@@ -182,9 +179,16 @@ def lambda_handler(event, context):
     Response = {}
     Response['url'] = url
     Response['message'] = 'Hello from Lambda land'
-
+    
     websocket.PostToConnection(message=str(Response))
+    
+    #clean tmp folder
+    for f in glob.glob("/tmp/*"):
+        os.remove(f)
+
     websocket.PostToConnection(message="complete")
+    
+   
 
 
     # #Form response and post back to provided connectionId

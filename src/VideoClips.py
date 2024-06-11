@@ -5,7 +5,7 @@ import yt_dlp
 #from bs4 import BeautifulSoup
 import os
 import subprocess
-from numba import jit
+# from numba import jit
 
 # import ffmpeg
 
@@ -28,7 +28,7 @@ class Clipper():
         self.tmp_folder = "/tmp"
         self.vid_duration = vid_duration 
         #self.ClipsPerVideo = ClipsPerVideo # ClipsPerVideo is not supported at this time
-    @jit
+    # @jit
     def get_most_rewatched_timestamp(self):
         with yt_dlp.YoutubeDL() as ydl: 
             info_dict = ydl.extract_info(self.main_vid_url, download=False)
@@ -78,7 +78,7 @@ class Clipper():
         end_time = round(timestamp+plus_timestamp)
         
         #retun 1 means failed, return 0 means success. 
-        return subprocess.run('yt-dlp "{0}" --download-sections "*{1}-{2}"'.format(self.main_vid_url,start_time,end_time),shell=True)
+        return subprocess.run('yt-dlp "{0}" --download-sections "*{1}-{2}" -o "/tmp/ClippedVideo"'.format(self.main_vid_url,start_time,end_time),shell=True)
         
         #detect if command returns error -11
         #if error -11 then tell user that the video will not work. 
@@ -165,8 +165,6 @@ class Stitcher:
         print("test3 movipy")
         print(StitchedVideo_W_audio_PATH)
         final_clip.write_videofile(StitchedVideo_W_audio_PATH)
-
-
 
     def Audio_watermark(self,StitchedVideoNoAudio,StitchedVideo_W_audio_PATH):
         print(StitchedVideoNoAudio)
