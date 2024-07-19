@@ -1,4 +1,6 @@
 ﻿# ShortVideoMaker
+Short Video Maker is an API endpoint for content creators to convert full length videos into short form videos such as tic tok or Youtube Shorts.
+
 ![alt text](https://github.com/AdamHing/ShortVideoMaker/blob/main/src/img/Clipper_Architecture.png?raw=true)
 ![alt text](https://github.com/AdamHing/ShortVideoMaker/blob/main/src/img/Figure_1.png?raw=true)
 
